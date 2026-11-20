@@ -121,6 +121,52 @@ def find_comfyui_roots() -> list[Path]:
     return found
 
 
+REQUIRED_WORKFLOWS = (
+    "workflows/image_z_image_turbo_t2i.json",
+    "workflows/video_ltx2.3_t2v.json",
+)
+_MODEL_EXTS = (".safetensors", ".gguf", ".ckpt", ".pth", ".pt", ".sft")
+
+
+def required_model_files() -> list[str]:
+    """Model file names the bundled workflows load, read from the workflow
+    JSONs themselves so this list can't drift from them."""
+    names: set[str] = set()
+
+    def walk(node) -> None:
+        if isinstance(node, dict):
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+        elif isinstance(node, str) and node.lower().endswith(_MODEL_EXTS):
+            names.add(Path(node.replace("\\", "/")).name)
+
+    for rel in REQUIRED_WORKFLOWS:
+        try:
+            walk(json.loads((ROOT / rel).read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError):
+            continue
+    return sorted(names)
+
+
+def installed_model_files(comfy_root: Path) -> set[str]:
+    """Names of every model file under this install's models/ folder."""
+    found: set[str] = set()
+    for models_dir in (comfy_root / "ComfyUI" / "models", comfy_root / "models"):
+        if not models_dir.is_dir():
+            continue
+        for _dirpath, _dirnames, filenames in os.walk(models_dir, followlinks=True):
+            found.update(f for f in filenames if f.lower().endswith(_MODEL_EXTS))
+    return found
+
+
+def missing_model_files(comfy_root: Path) -> list[str]:
+    have = installed_model_files(comfy_root)
+    return [n for n in required_model_files() if n not in have]
+
+
 def find_ffmpeg(comfy_root: Path | None) -> str | None:
     """Look for ffmpeg in comfy_root, then on PATH. Returns absolute path or None."""
     if comfy_root:
@@ -164,9 +210,15 @@ def offer_to_create_config(auto_fix: bool, no_fix: bool) -> dict | None:
         chosen = roots[0]
         say(OK_MARK, f"found ComfyUI at: {chosen}")
     else:
+        # Several installs on one machine is common (one per project). Put the
+        # one that actually holds this project's models first, so the default
+        # pick is the install that can run the workflows.
+        total = len(required_model_files())
+        missing = {r: len(missing_model_files(r)) for r in roots}
+        roots.sort(key=lambda r: missing[r])
         print(f"  {WN_MARK}  found multiple ComfyUI installs:")
         for i, r in enumerate(roots, 1):
-            print(f"      [{i}] {r}")
+            print(f"      [{i}] {r}  ({total - missing[r]}/{total} required model files)")
         if auto_fix:
             chosen = roots[0]
             print(f"      auto-fix: picking [{1}] {chosen}")
@@ -294,13 +346,26 @@ def check_ffmpeg(cfg: dict, comfy_root: Path | None) -> bool:
     return False
 
 
+def check_models(comfy_root: Path) -> None:
+    """Warn about model files the workflows need but this install lacks.
+    A warning, not a blocker: models can also live outside models/ via
+    ComfyUI's extra_model_paths.yaml, which this check doesn't read."""
+    needed = required_model_files()
+    missing = missing_model_files(comfy_root)
+    if not missing:
+        say(OK_MARK, f"all {len(needed)} model files the workflows need are installed")
+        return
+    say(WN_MARK, f"{len(missing)} of {len(needed)} model files not found under {comfy_root}",
+        "Generation will fail until these are in ComfyUI's models/ folders:\n"
+        + "\n".join(f"  - {n}" for n in missing) + "\n"
+        "See README-setup.md for which subfolder each goes in. If they live elsewhere\n"
+        "via extra_model_paths.yaml, or comfy_root points at the wrong install, ignore\n"
+        "this or fix comfy_root in config.json.")
+
+
 def check_workflows() -> bool:
-    required = [
-        "workflows/image_z_image_turbo_t2i.json",
-        "workflows/video_ltx2.3_t2v.json",
-    ]
     ok = True
-    for r in required:
+    for r in REQUIRED_WORKFLOWS:
         if (ROOT / r).is_file():
             say(OK_MARK, f"workflow present: {r}")
         else:
@@ -398,6 +463,7 @@ def main() -> int:
     if comfy_root:
         required_ok &= check_comfy_subdirs(comfy_root)
         required_ok &= check_ffmpeg(cfg, comfy_root)
+        check_models(comfy_root)
     else:
         required_ok = False
     required_ok &= check_workflows()

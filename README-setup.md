@@ -33,7 +33,9 @@ The folder layout is described in the main [README](README.md#repository-layout)
 3. **Double-click `start.bat`** in the project root. That's the whole setup procedure.
    It will:
      - find Python on your machine (or tell you to install it)
-     - search common locations for your ComfyUI portable install
+     - search common locations for your ComfyUI portable install (with several installs
+       on one machine, it picks the one that holds the model files listed above)
+     - list any of those model files that are missing
      - auto-detect ffmpeg
      - write `config.json` for you (no prompts — just picks the first ComfyUI it finds)
      - check `input/`, `output/`, ffmpeg, workflows, folder permissions
