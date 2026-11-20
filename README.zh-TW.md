@@ -16,6 +16,33 @@
 
 **[▶ YouTube 上的 otherwake 播放清單](https://www.youtube.com/playlist?list=PLjHD_2DMq8kRvXnQpLKvnZY_--2Ce3M-v)** —— 三趟完整的旅程，每一段都是這個迴圈生成的：《燼 · Ember》（0:53）、《覺 · Wake》（6:55）、《♪》（0:29）。這三支出自第一代 agent，當時提示還沒有改寫成 `logs/` 裡那些旅程用的 vlogger 口吻。
 
+下面是後來幾趟旅程的畫面。沒有任何分鏡腳本：去哪裡、用誰的眼睛看、用什麼畫風，都是 agent 一段一段自己決定的。
+
+<table>
+<tr>
+<td><img src="docs/gallery/pool-underwater.jpg" alt="夜裡從後院泳池底往上看水面"></td>
+<td><img src="docs/gallery/cat-pizza.jpg" alt="夜裡街上一隻虎斑貓在吃剩下的披薩"></td>
+<td><img src="docs/gallery/crossing-clip.gif" alt="電車通過平交道，80 年代賽璐珞動畫風格"></td>
+</tr>
+<tr>
+<td align="center"><sub>半夜在某戶人家後院泳池邊醒來，潛下去從底下看水面。</sub></td>
+<td align="center"><sub>同一趟旅程的幾段之後，變成一隻吃別人剩下披薩的貓。</sub></td>
+<td align="center"><sub>「走出 diner 整個世界就變成 80 年代 cel 動畫。」</sub></td>
+</tr>
+<tr>
+<td><img src="docs/gallery/shrine-fox.jpg" alt="稻荷神社長滿青苔的石階上一隻狐狸，賽璐珞動畫風格"></td>
+<td><img src="docs/gallery/temple-incense.jpg" alt="線香的煙往彩繪的廟宇天花板升上去"></td>
+<td><img src="docs/gallery/seawall-ink.jpg" alt="用水墨畫出的海堤和一個獨行的人"></td>
+</tr>
+<tr>
+<td align="center"><sub>那趟旅程的終點：稻荷神社裡一隻從石像座上走下來的狐狸。</sub></td>
+<td align="center"><sub>台灣那一趟，當線香的煙，從下往上看廟的天花板。</sub></td>
+<td align="center"><sub>用水墨畫的溫哥華海堤。</sub></td>
+</tr>
+</table>
+
+前四張出自同一趟旅程 **渡 · cross**。這趟旅程完整收在 repo 裡（30 段，含圖片和影片），所以剛 clone 下來檢視器就有東西可以播：點「渡」分頁，或直接開 `http://127.0.0.1:8787/www/#渡`。影片也可以直接從 [video/](video/) 打開。
+
 ## 一覽
 
 這是個人專案，2026 年 4 月到 6 月之間做的，公開出來當作這段工作的紀錄。整套東西在一張消費級顯卡上就能從頭跑到尾。
@@ -26,7 +53,7 @@
 - **單檔的網頁 viewer**（[www/index.html](www/index.html)）：agent 分頁、旅程分組、EN / 繁中 / 日本語 的 thought、連續播放、就地編輯，還能把一趟旅程匯出成燒好字幕的 mp4。
 - **主要的工程問題是 prompt 設計。**commit 紀錄大部分都在處理行為：不讓每位 agent 都收斂成同一種十段短片、不讓第一人稱的口吻滑回場景描述、讓小型本地模型學會自己結束旅程。
 
-**這個 repo 裡有什麼：**程式碼、workflow，以及作者自己跑出來的文字紀錄 —— [logs/](logs/) 裡有 42 位 agent、約 1,200 段，每段都有 prompt，以及英文、繁體中文、日文三種語言的 thought。產出的圖片和影片（好幾 GB）沒有放進來，所以剛 clone 下來時 viewer 只看得到文字，要自己生成才有畫面。
+**這個 repo 裡有什麼：**程式碼、workflow，以及作者自己跑出來的文字紀錄 —— [logs/](logs/) 裡有 43 位 agent、約 1,200 段，每段都有 prompt，以及英文、繁體中文、日文三種語言的 thought。產出的圖片和影片只收了一趟範例旅程（渡 · cross，約 60 MB）；其餘加起來好幾 GB，沒有放進來，所以那些旅程在 viewer 裡只有文字、畫面是空的。
 
 **狀態：**已不再積極開發。下面寫的都是當時開發和測試用的環境（LTX 2.3、ComfyUI、表格裡列的模型）。這個領域的模型名稱幾個月就換一輪，請看[模型時效](#模型時效)。
 

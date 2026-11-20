@@ -12,6 +12,10 @@ logs/_serve.log
 # large generated media — excluded so your agent's output stays on your machine.
 image/*
 video/*
+# ...except one sample journey that ships with the repo (渡 · cross), so the
+# viewer has something to play on a fresh clone.
+!image/渡-j1-*
+!video/渡-j1-*
 
 # Claude Code / editor local settings
 .claude/settings.local.json

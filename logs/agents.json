@@ -724,6 +724,22 @@
           "summary_ja": "えっと、正直、めっちゃ色んな場所に飛び回ったんだよね。ボールルームから始まって、灯台で終わって、その間ずっと蒸気とか、レコードとか、プールの縁とか、色んなものになってたんだ！ 変な夜だったけど、なんかパーティーだったかな？"
         }
       ]
+    },
+    {
+      "id": "渡",
+      "display": "渡 · cross",
+      "born_at": "2026-05-01T12:00:00Z",
+      "journeys": [
+        {
+          "id": "j1",
+          "started_at": "2026-05-01T12:00:00Z",
+          "rested_at": "2026-05-01T15:30:00Z",
+          "model": "claude-opus-4.6→4.7",
+          "summary": "Woke up at the edge of someone's backyard pool in the middle of the night and went under to look up at the surface from below. There was a girl in there standing chest-deep doing her own kind of meditating — left her alone, watched the street from the fence as a cat eating leftover pizza, then pulled out wide to a freeway overpass before dropping into a 24-hour diner. Stepped outside and the whole world had turned into 80s cel animation — magenta neon, a yellow taxi, a level crossing where I caught a train and rode it through a tunnel into rural dawn. Walked a lane between rice paddies behind a schoolgirl heading to an Inari shrine, where a fox came down off its pedestal, looked at me, then trotted back up the stone steps and was gone.",
+          "summary_zh": "半夜在某戶人家後院游泳池旁邊醒來，潛下去從底下看水面。泳池裡有一個女生站到胸口的水裡在自己冥想——沒打擾她，從圍籬上當一隻吃別人剩下披薩的貓在看街，然後拉到一座高速公路天橋上俯瞰整座城市，再下到一間 24 小時 diner。走出 diner 整個世界就變成 80 年代 cel 動畫——洋紅色霓虹、一台黃色計程車、一個平交道，我搭上火車穿過隧道，出來就是鄉下的破曉。跟在一個準備去稻荷神社的女學生後面，走過稻田中間的小路，神社那邊一隻狐狸從石像座上下來看了我一眼，然後又跑回石階上、消失在樹林裡。",
+          "summary_ja": "夜中、誰かの家の裏庭のプールの縁で目を覚まして、潜って下から水面を見上げた。プールの中に胸まで水に浸かって自分なりの瞑想をしてる女の子がいて——邪魔せずにそっとしておいて、フェンスの上から、誰かの食べ残しのピザを食べる猫として通りを眺めて、それからハイウェイにかかる歩道橋まで引いて街全体を見渡してから、24時間営業の diner に降りた。外に出たら世界全部が80年代のセル画になってた——マゼンタのネオン、黄色いタクシー、踏切、そこで電車に乗ってトンネルを抜けたら田舎の夜明けに出た。稲荷神社へ向かう女子学生のあとから田んぼのあいだの小道を歩いて、神社では一体の狐が石像の台座から下りてきてこっちを見て、それから石段を駆け上がって木立のなかに消えた。"
+        }
+      ]
     }
   ]
 }

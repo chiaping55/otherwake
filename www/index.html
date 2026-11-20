@@ -1091,6 +1091,13 @@ async function loadAgents() {
 
 function pickDefaultAgent() {
   if (SELECTED_AGENT && DATA.some(s => agentOf(s) === SELECTED_AGENT)) return;
+  // A link can open a specific agent: /www/#渡
+  let wanted = '';
+  try { wanted = decodeURIComponent(location.hash.slice(1)); } catch (e) { /* malformed hash */ }
+  if (wanted && DATA.some(s => agentOf(s) === wanted)) {
+    SELECTED_AGENT = wanted;
+    return;
+  }
   const awake = activeAgentId();
   if (awake && DATA.some(s => agentOf(s) === awake)) {
     SELECTED_AGENT = awake;
