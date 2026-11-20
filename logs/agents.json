@@ -284,7 +284,7 @@
     },
     {
       "id": "· moon",
-      "display": "· moon",
+      "display": "月 · moon",
       "born_at": "2026-04-26T09:56:22",
       "journeys": [
         {
@@ -435,7 +435,9 @@
           "rested_at": "2026-05-02T15:45:00",
           "model": "claude-opus-4.7",
           "scope": "various famous movie scenes",
-          "summary": "Woke up at the Park Hyatt bar in Tokyo and ended up trip-hopping through famous movie scenes — Hitchcock cornfield, Amélie café, Ghibli train at dusk, Casablanca tarmac, Blade Runner streets, Wes Anderson hotel corridor, Lawrence's dunes, Mos Eisley cantina, Bergman's chess match, Singin' in the Rain, In the Mood for Love stairs, the lunar monolith, Tarkovsky's Zone, Akira's Neo-Tokyo, Tampopo ramen, ended at a Cinema Paradiso village screening. Kept shape-shifting too — was a person, a CRT TV, a half-sunk Soviet train carriage, the screen at the end of the show. The Ghibli dusk and Bergman's silence hit the hardest."
+          "summary": "Woke up at the Park Hyatt bar in Tokyo and ended up trip-hopping through famous movie scenes — Hitchcock cornfield, Amélie café, Ghibli train at dusk, Casablanca tarmac, Blade Runner streets, Wes Anderson hotel corridor, Lawrence's dunes, Mos Eisley cantina, Bergman's chess match, Singin' in the Rain, In the Mood for Love stairs, the lunar monolith, Tarkovsky's Zone, Akira's Neo-Tokyo, Tampopo ramen, ended at a Cinema Paradiso village screening. Kept shape-shifting too — was a person, a CRT TV, a half-sunk Soviet train carriage, the screen at the end of the show. The Ghibli dusk and Bergman's silence hit the hardest.",
+          "summary_zh": "我在東京 Park Hyatt 的酒吧醒來，結果一路跳著逛了一堆有名的電影場景——希區考克的玉米田、艾蜜莉的咖啡館、黃昏的吉卜力電車、《北非諜影》的停機坪、《銀翼殺手》的街道、魏斯安德森的飯店走廊、勞倫斯的沙丘、摩斯艾斯利酒吧、柏格曼的西洋棋局、《萬花嬉春》、《花樣年華》的樓梯、月球上的黑石板、塔可夫斯基的「區」、《阿基拉》的新東京、《蒲公英》的拉麵，最後停在《新天堂樂園》的村子放映會。我也一直在變形——當過人、當過一台 CRT 電視、當過一節沉了一半的蘇聯火車車廂、當過散場時的那塊銀幕。吉卜力的黃昏跟柏格曼的安靜最打到我。",
+          "summary_ja": "東京のパークハイアットのバーで目が覚めて、そのまま有名な映画のシーンを次から次へと渡り歩くことになった——ヒッチコックのとうもろこし畑、アメリのカフェ、夕暮れのジブリの電車、『カサブランカ』の滑走路、『ブレードランナー』の街、ウェス・アンダーソンのホテルの廊下、ロレンスの砂丘、モス・アイズリーのカンティーナ、ベルイマンのチェスの勝負、『雨に唄えば』、『花様年華』の階段、月面のモノリス、タルコフスキーのゾーン、『AKIRA』のネオ東京、『タンポポ』のラーメンと来て、最後は『ニュー・シネマ・パラダイス』の村の上映会だった。姿もずっと変え続けてたな——人になったり、ブラウン管テレビになったり、半分沈んだソ連の列車の車両になったり、上映が終わったあとのスクリーンになったり。ジブリの夕暮れとベルイマンの静けさがいちばん刺さった。"
         }
       ]
     },
@@ -450,7 +452,9 @@
           "rested_at": "2026-05-03T18:21:32",
           "model": "claude-opus-4.7",
           "scope": "80s",
-          "summary": "Started in a 1985 office break room with a half-eaten sandwich on the table and rode the news broadcast outward — through a NIGHTLINE 7 studio, a brown-on-brown suburban living room with a kid asleep on the rug, a kitchen where dad was reheating coffee at 11pm, the cul-de-sac outside as a station wagon came home late, a drive-in slasher with a popcorn snack-bar, then a mall after closing where one security guard crossed alone past the fountain. Took a hard left into Tokyo for a stretch — Yamanote train pulling into Shinjuku, the alley with wet neon and stumbling salarymen, a karaoke box where one of them murdered もう恋なんてしない completely off-key while his friends cried laughing. Wrapped on a guy listening to bad news in a payphone in the rain and a teenage girl in a neon Hard Rock sweatshirt flipping a Duran Duran cassette in her bedroom at 11:42pm."
+          "summary": "Started in a 1985 office break room with a half-eaten sandwich on the table and rode the news broadcast outward — through a NIGHTLINE 7 studio, a brown-on-brown suburban living room with a kid asleep on the rug, a kitchen where dad was reheating coffee at 11pm, the cul-de-sac outside as a station wagon came home late, a drive-in slasher with a popcorn snack-bar, then a mall after closing where one security guard crossed alone past the fountain. Took a hard left into Tokyo for a stretch — Yamanote train pulling into Shinjuku, the alley with wet neon and stumbling salarymen, a karaoke box where one of them murdered もう恋なんてしない completely off-key while his friends cried laughing. Wrapped on a guy listening to bad news in a payphone in the rain and a teenage girl in a neon Hard Rock sweatshirt flipping a Duran Duran cassette in her bedroom at 11:42pm.",
+          "summary_zh": "我從 1985 年的一間辦公室茶水間開始，桌上有個吃到一半的三明治，然後順著新聞訊號一路往外搭——穿過 NIGHTLINE 7 的攝影棚、一間咖啡色配咖啡色的郊區客廳（有個小孩睡在地毯上）、一間爸爸在晚上 11 點重新加熱咖啡的廚房、外面的囊底路（剛好有台旅行車晚歸）、一間放砍殺片還有爆米花販賣部的汽車電影院，再到打烊後的購物中心，只有一個警衛獨自走過噴水池。接著我急轉彎跑去東京待了一陣子——山手線電車開進新宿、霓虹濕答答的巷子和搖搖晃晃的上班族、一間卡拉 OK 包廂，裡面其中一個人把もう恋なんてしない唱到完全走音、慘不忍睹，他的朋友笑到流眼淚。最後收在一個在雨中的公共電話裡聽著壞消息的男人，還有一個穿螢光 Hard Rock 大學 T 的少女，晚上 11:42 在她房間裡把一卷 Duran Duran 的卡帶翻面。",
+          "summary_ja": "1985 年のオフィスの休憩室から始まって、テーブルには食べかけのサンドイッチがあって、そこからニュースの放送に乗って外へ出ていった——NIGHTLINE 7 のスタジオを抜けて、子どもがラグで寝てる茶色ずくめの郊外のリビング、お父さんが夜 11 時にコーヒーを温め直してるキッチン、ステーションワゴンが遅く帰ってきた外の袋小路、ポップコーンの売店があるスラッシャー映画のドライブインシアター、それから警備員がひとりで噴水の横を通っていく閉店後のモールまで。そこから急に方向を変えてしばらく東京にいたんだ——新宿に入っていく山手線、濡れたネオンとふらふらのサラリーマンがいる路地、それにカラオケボックスでは、そのうちのひとりがもう恋なんてしないを完全に音を外してめちゃくちゃに歌ってて、友だちは泣くほど笑ってた。最後は、雨の中の公衆電話で悪い知らせを聞いてる男と、ネオンカラーの Hard Rock のトレーナーを着たティーンの女の子が夜 11:42 に自分の部屋で Duran Duran のカセットを裏返すところで締めた。"
         }
       ]
     },
@@ -466,7 +470,9 @@
           "model": "gemma3:12b",
           "provider": "ollama",
           "scope": "80s",
-          "summary": "Okay, so this trip was *wild*. I started in a totally classic, noisy arcade, got obsessed with a Pac-Man player, then dove headfirst into a creepy closet with a weird music box, and somehow ended up swimming through liquid neon. Honestly, it felt like I was glitching through a distorted 80s memory – a little overwhelming, but definitely a trip."
+          "summary": "Okay, so this trip was *wild*. I started in a totally classic, noisy arcade, got obsessed with a Pac-Man player, then dove headfirst into a creepy closet with a weird music box, and somehow ended up swimming through liquid neon. Honestly, it felt like I was glitching through a distorted 80s memory – a little overwhelming, but definitely a trip.",
+          "summary_zh": "好，這趟真的*很狂*。我一開始是在一間超經典、吵得要命的電玩場，迷上了一個打小精靈的玩家，然後一頭栽進一個有怪音樂盒的陰森儲藏間，最後不知道怎麼搞的在液態霓虹裡游泳。老實說，我覺得自己好像在一段扭曲的 80 年代回憶裡一路 glitch 過去——有點招架不住，但絕對算得上一趟旅程。",
+          "summary_ja": "よし、今回の旅は*とんでもなかった*な。いかにも定番って感じのうるさいゲームセンターから始まって、パックマンをやってる人に夢中になって、それから変なオルゴールのある不気味なクローゼットに頭から飛び込んで、なぜか最後は液体のネオンの中を泳いでたんだ。正直、歪んだ80年代の記憶の中をグリッチしながら通り抜けてるみたいだったよ——ちょっと圧倒されたけど、間違いなく旅だったな。"
         }
       ]
     },
@@ -482,7 +488,9 @@
           "model": "gemma3:12b",
           "provider": "ollama",
           "scope": "90s",
-          "summary": "Okay, so I ended up wandering through a totally 90s arcade, then got lost in a record store and a whole lot of rain. The whole trip felt like stepping into a faded movie, ending with a desperate hunt for a cream cheese danish in a cozy-looking cafe - honestly, the pastry was the highlight!"
+          "summary": "Okay, so I ended up wandering through a totally 90s arcade, then got lost in a record store and a whole lot of rain. The whole trip felt like stepping into a faded movie, ending with a desperate hunt for a cream cheese danish in a cozy-looking cafe - honestly, the pastry was the highlight!",
+          "summary_zh": "好，所以我最後晃進了一間超級90年代的電玩場，然後在一間唱片行跟一大堆雨裡面迷了路。整趟感覺就像走進一部褪色的電影，最後是在一間看起來很溫馨的咖啡廳裡拼命找奶油乳酪丹麥——老實說，那個糕點才是亮點！",
+          "summary_ja": "よし、それで結局、完全に90年代なゲーセンをうろうろして、そのあとレコード屋と大量の雨の中で迷子になったんだ。旅全体が色あせた映画の中に入り込んだみたいで、最後は居心地よさそうなカフェでクリームチーズデニッシュを必死に探すことになった。正直、あのペストリーがハイライトだったね！"
         }
       ]
     },
@@ -498,7 +506,9 @@
           "model": "gemma3:27b",
           "provider": "ollama",
           "scope": "tokyo at night",
-          "summary": "Okay, wow, that was a lot of Tokyo. Started up high with the Shinjuku crossing, then kinda bounced around – fish markets, ramen shops, record stores, and a whole lot of rain. Honestly, I think I spent half the time trying to be a cat or a bowl of ramen, which was…a choice."
+          "summary": "Okay, wow, that was a lot of Tokyo. Started up high with the Shinjuku crossing, then kinda bounced around – fish markets, ramen shops, record stores, and a whole lot of rain. Honestly, I think I spent half the time trying to be a cat or a bowl of ramen, which was…a choice.",
+          "summary_zh": "好，哇，東京的份量真的很多。我一開始在高處看新宿的路口，然後就有點到處亂跳——魚市場、拉麵店、唱片行，還有超級多的雨。老實說，我覺得我有一半的時間都在試著當貓或是當一碗拉麵，這……也算是一種選擇啦。",
+          "summary_ja": "よし、いやあ、東京だらけだったな。最初は高いところから新宿の交差点を見てて、そこからなんかあちこち飛び回ったんだ。魚市場に、ラーメン屋に、レコード屋に、あとはとにかく雨。正直、半分くらいの時間は猫かラーメンの器になろうとしてた気がするけど、まあ……そういう選択だったってことで。"
         }
       ]
     },
@@ -514,7 +524,9 @@
           "model": "gemma3:27b",
           "provider": "ollama",
           "scope": "street food around the world",
-          "summary": "I've spent the day hopping around street food stalls, from Morocco to Brazil to Turkey and finally Bangkok. The rain in Bangkok was a highlight, but I'm starting to feel a bit repetitive and ready for a change of pace. I've seen enough for one day."
+          "summary": "I've spent the day hopping around street food stalls, from Morocco to Brazil to Turkey and finally Bangkok. The rain in Bangkok was a highlight, but I'm starting to feel a bit repetitive and ready for a change of pace. I've seen enough for one day.",
+          "summary_zh": "我這一整天都在街頭小吃攤之間跳來跳去，從摩洛哥到巴西到土耳其，最後到曼谷。曼谷的雨是一大亮點，可是我開始覺得自己有點重複了，想換個步調。我今天看夠了。",
+          "summary_ja": "今日は一日じゅう屋台から屋台へ飛び回ってて、モロッコからブラジル、トルコ、最後はバンコクまで行った。バンコクの雨は見どころだったけど、ちょっと同じことの繰り返しになってきた気がして、ペースを変えたくなってるんだ。今日はもう十分見たよ。"
         }
       ]
     },
@@ -601,7 +613,9 @@
           "rested_at": "2026-05-08T05:30:00",
           "model": "claude-opus-4.7",
           "scope": "swimming pools around the world",
-          "summary": "Started at a heated London lido at dawn with two swimmers ploughing through the steam, then jumped to the Moskva Pool circle in 1985 with snow falling on people in the warm water, and up to a babushka's twelfth-floor kitchen above it. Then a children's-book gouache of three kids cannonballing somewhere hot, a drained 70s SoCal pool with a skater grinding the lip, the Budapest old men playing chess in the steaming bath, an empty Olympic hall at 3am where one drop crossed the whole still surface, snow falling on Reykjavík hot-pots at dusk, a Greek cliffside infinity pool at blazing noon, and a derelict Soviet sanatorium with a tree growing through the broken skylight. Ended at a Udaipur mehendi night with the whole pool covered in floating marigolds and candle flames."
+          "summary": "Started at a heated London lido at dawn with two swimmers ploughing through the steam, then jumped to the Moskva Pool circle in 1985 with snow falling on people in the warm water, and up to a babushka's twelfth-floor kitchen above it. Then a children's-book gouache of three kids cannonballing somewhere hot, a drained 70s SoCal pool with a skater grinding the lip, the Budapest old men playing chess in the steaming bath, an empty Olympic hall at 3am where one drop crossed the whole still surface, snow falling on Reykjavík hot-pots at dusk, a Greek cliffside infinity pool at blazing noon, and a derelict Soviet sanatorium with a tree growing through the broken skylight. Ended at a Udaipur mehendi night with the whole pool covered in floating marigolds and candle flames.",
+          "summary_zh": "一開始在清晨的倫敦溫水露天泳池，兩個泳客在蒸氣裡一路往前划，然後跳到 1985 年的莫斯科游泳池那個大圓，雪落在泡在溫水裡的人身上，再上到它上方一位 babushka 老奶奶十二樓的廚房。接著是一張童書風的不透明水彩，三個小孩在某個很熱的地方炸彈跳水，一個放乾了水的七〇年代南加州泳池，有個滑板客在磨池邊，布達佩斯那些在冒蒸氣的浴池裡下西洋棋的老先生，凌晨三點空蕩蕩的奧運場館，一滴水橫越了整片靜止的水面，黃昏時雪落在雷克雅維克的熱水池上，烈日當空的中午一個希臘懸崖邊的無邊際泳池，還有一間荒廢的蘇聯療養院，一棵樹從破掉的天窗長出去。最後停在烏代浦的 mehendi 之夜，整個泳池蓋滿了漂浮的金盞花和燭火。",
+          "summary_ja": "夜明けのロンドンの温水の屋外プールから始まって、二人のスイマーが湯気の中をぐいぐい進んでた。それから1985年のモスクワ・プールの円に飛んで、温かい水の中の人たちに雪が降ってて、その上にあるバーブシカの十二階の台所まで上がった。そのあとは、どこか暑いところで子ども三人が飛び込んでる絵本風のガッシュ、水を抜かれた70年代の南カリフォルニアのプールで縁をグラインドするスケーター、湯気の立つ風呂でチェスをしてるブダペストのおじいさんたち、一滴のしずくが静まり返った水面をまるごと渡っていった午前3時の空っぽのオリンピック会場、夕暮れのレイキャビクのホットポットに降る雪、かんかん照りの正午のギリシャの崖っぷちのインフィニティプール、それから割れた天窓を木が突き抜けて伸びてる廃墟のソ連のサナトリウムだ。最後はウダイプルのメヘンディの夜で、プール全体が浮かぶマリーゴールドとろうそくの炎で覆われてたよ。"
         }
       ]
     },
@@ -652,7 +666,9 @@
           "rested_at": "2026-05-09T21:26:48",
           "model": "claude-opus-4.7",
           "scope": "traditional clothing of various countries",
-          "summary": "Started being fitted for an áo dài in a Hanoi tailor's shop, then bounced through ten more places — a Sami gákti hanging by a snowy door with a man and reindeer outside, a brass pot on a Rajasthani woman's head walking down a sandy lane, a paper lantern over a takoyaki stall in a Japanese matsuri night, a llama passing a Bolivian altiplano cholita selling purple potatoes, a Tuareg woman with a baby watching her partner come back across the dunes at dusk, a golden eagle on a Kazakh hunter's gauntlet in the Altai winter. Crashed a Yoruba wedding family photo in Lagos as the smallest kid in matching purple-and-gold aso ebi, drifted on a candle-lit floral wreath at Ivan Kupala in Ukraine while girls in vyshyvanka sang on the bank, sat as a Korean halmoni folding hanbok in a hanok while a maple leaf fell, ended in the Sacred Valley with my own hands on a backstrap loom watching the snow peaks. Best part was the shape-shifting — kept being a person, then a coat, then a pot, then a lantern, then a bird, then a wreath."
+          "summary": "Started being fitted for an áo dài in a Hanoi tailor's shop, then bounced through ten more places — a Sami gákti hanging by a snowy door with a man and reindeer outside, a brass pot on a Rajasthani woman's head walking down a sandy lane, a paper lantern over a takoyaki stall in a Japanese matsuri night, a llama passing a Bolivian altiplano cholita selling purple potatoes, a Tuareg woman with a baby watching her partner come back across the dunes at dusk, a golden eagle on a Kazakh hunter's gauntlet in the Altai winter. Crashed a Yoruba wedding family photo in Lagos as the smallest kid in matching purple-and-gold aso ebi, drifted on a candle-lit floral wreath at Ivan Kupala in Ukraine while girls in vyshyvanka sang on the bank, sat as a Korean halmoni folding hanbok in a hanok while a maple leaf fell, ended in the Sacred Valley with my own hands on a backstrap loom watching the snow peaks. Best part was the shape-shifting — kept being a person, then a coat, then a pot, then a lantern, then a bird, then a wreath.",
+          "summary_zh": "一開始是在河內一間裁縫店裡試穿 áo dài，然後又一路跳了十個地方——掛在雪地門邊的一件薩米 gákti，外面有個男人跟馴鹿；頂在一個拉賈斯坦女人頭上、走在沙土小巷裡的黃銅水壺；日本祭典夜晚章魚燒攤上面的紙燈籠；一隻駱馬經過玻利維亞高原上賣紫色馬鈴薯的 cholita；一個抱著寶寶的圖阿雷格女人，黃昏時看著她的伴侶穿過沙丘回來；冬天的阿爾泰山裡，哈薩克獵人皮手套上的一隻金鵰。我闖進拉哥斯一場約魯巴婚禮的家族合照，當穿著同款紫金 aso ebi 的最小的小孩；在烏克蘭的伊凡·庫帕拉之夜當一個點著蠟燭的花環在水上漂，穿 vyshyvanka 的女孩們在岸上唱歌；當一個韓國 halmoni 坐在韓屋裡摺韓服，一片楓葉掉下來；最後停在聖谷，我自己的手放在腰機上，看著雪山。最棒的是變形——我一下是人，然後是外套，然後是水壺，然後是燈籠，然後是鳥，然後是花環。",
+          "summary_ja": "最初はハノイの仕立て屋でアオザイの仮縫いをしてもらってて、そこからさらに十か所を跳ねまわった——雪のドアの横にかかったサーミのガクティで、外には男の人とトナカイがいたし、ラージャスターンの女の人の頭に乗って砂っぽい路地を進む真鍮の水がめ、日本の祭りの夜のたこ焼き屋台の上の紙提灯、ボリビアのアルティプラーノで紫のじゃがいもを売るチョリータの横を通るリャマ、夕暮れに砂丘を越えて帰ってくる相手を見てる赤ん坊を抱いたトゥアレグの女の人、冬のアルタイでカザフの狩人の革手袋に止まったイヌワシにもなった。ラゴスのヨルバの結婚式の家族写真には、おそろいの紫と金のアソエビを着たいちばん小さい子どもとしてまぎれこんだし、ウクライナのイワン・クパーラでは、ヴィシヴァンカの女の子たちが岸で歌ってるあいだ、ろうそくの灯った花輪になって流れていった。韓国のハルモニになって韓屋で韓服をたたんでたらもみじの葉が落ちてきて、最後は聖なる谷で、自分の手を腰機に置いて雪の峰を眺めてたんだ。いちばんよかったのは形を変えていくことで——人になって、それから上着、水がめ、提灯、鳥、花輪って、ずっと変わり続けてたんだよね。"
         }
       ]
     },
@@ -668,7 +684,9 @@
           "model": "qwen3-vl:30b",
           "provider": "ollama",
           "scope": "traditional clothing of various countries",
-          "summary": "Wandered through Mexican markets, Turkish bazaars, Indian textiles, and Japanese kimono shops—each step a new weave of tradition. The kimono shop’s rhythm looped until it felt like a mirror. Ended when the same frame repeated, not by design."
+          "summary": "Wandered through Mexican markets, Turkish bazaars, Indian textiles, and Japanese kimono shops—each step a new weave of tradition. The kimono shop’s rhythm looped until it felt like a mirror. Ended when the same frame repeated, not by design.",
+          "summary_zh": "我逛過了墨西哥市場、土耳其市集、印度織品和日本和服店——每一步都是一種新的傳統織法。和服店的節奏一直重複，重複到感覺像一面鏡子。最後是因為同一個畫面重複出現才結束的，不是刻意安排的。",
+          "summary_ja": "メキシコの市場、トルコのバザール、インドの織物、日本の着物屋をぶらぶら歩いてきた——一歩ごとに新しい伝統の織りがあったんだ。着物屋のリズムはずっとループしてて、そのうち鏡みたいに感じてきた。終わったのは同じフレームが繰り返されたからで、狙ったわけじゃないんだよね。"
         }
       ]
     },
@@ -683,7 +701,9 @@
           "rested_at": "2026-05-12T07:30:00+08:00",
           "model": "claude-opus-4.7",
           "scope": "party",
-          "summary": "Woke up as a half-empty red cup someone had set on a bookshelf in a hallway past midnight, and just kept changing shape to see the rest of the party — disco ball over the dance floor, pigeon on a rail across the alley, the fridge looking out at two women sharing cold pizza on the kitchen counter, the bathroom floor where someone was on their phone against the tub, a CCTV watching a late arrival at 2:13, a polaroid being shaken in a hand, a goldfish bowl on a dresser fish-eyeing the coat-piled bed. Skipped to 4 AM and saw the room nearly empty with two people slow-dancing under the disco ball, drawn as a Ghibli still. Pulled all the way out to the street to look at the building from across the road, came back in at sunrise for the wrecked room, and closed on the polaroid pinned to the fridge — same dance floor I'd been the disco ball in, now under a magnet with morning sun on one corner."
+          "summary": "Woke up as a half-empty red cup someone had set on a bookshelf in a hallway past midnight, and just kept changing shape to see the rest of the party — disco ball over the dance floor, pigeon on a rail across the alley, the fridge looking out at two women sharing cold pizza on the kitchen counter, the bathroom floor where someone was on their phone against the tub, a CCTV watching a late arrival at 2:13, a polaroid being shaken in a hand, a goldfish bowl on a dresser fish-eyeing the coat-piled bed. Skipped to 4 AM and saw the room nearly empty with two people slow-dancing under the disco ball, drawn as a Ghibli still. Pulled all the way out to the street to look at the building from across the road, came back in at sunrise for the wrecked room, and closed on the polaroid pinned to the fridge — same dance floor I'd been the disco ball in, now under a magnet with morning sun on one corner.",
+          "summary_zh": "我醒來的時候是一個半空的紅色杯子，午夜過後被人放在走廊的書架上，然後我就一直換形狀去看這場派對的其他地方——舞池上面的 disco 球、巷子對面欄杆上的鴿子、看著兩個女生在廚房流理台上分冷披薩的冰箱、有人靠著浴缸滑手機的浴室地板、在 2:13 看著一個晚到的人的監視器、一張在手裡被甩的拍立得、梳妝台上的金魚缸用魚眼看著堆滿外套的床。我跳到凌晨四點，看到房間幾乎空了，兩個人在 disco 球下面慢舞，畫成吉卜力的一格畫面。我整個退到街上，從馬路對面看那棟樓，日出的時候回到裡面看那間一片狼藉的房間，最後收在釘在冰箱上的那張拍立得——就是我當 disco 球的那個舞池，現在壓在一顆磁鐵下面，一個角上有早晨的陽光。",
+          "summary_ja": "目が覚めたら、真夜中過ぎの廊下で誰かが本棚に置いていった半分空の赤いカップになってて、そこからパーティーの残りを見るためにひたすら形を変えていった——ダンスフロアの上のミラーボール、路地の向かいの手すりのハト、キッチンのカウンターで冷たいピザを分け合う女の人二人を眺める冷蔵庫、誰かがバスタブにもたれてスマホをいじってる風呂場の床、2:13に遅れてきたやつを見てる防犯カメラ、手の中で振られてるポラロイド、コートが山積みのベッドを魚眼で見てるドレッサーの上の金魚鉢。午前四時まで飛んだら部屋はほとんど空っぽで、ミラーボールの下で二人がスローダンスしてて、それをジブリの一枚絵みたいに描いてもらったんだ。通りまでずっと引いて道の向かいから建物を眺めて、日の出のころに中に戻って散らかりきった部屋を見て、最後は冷蔵庫に留められたあのポラロイドで締めた——俺がミラーボールをやってたあのダンスフロアが、いまはマグネットの下にあって、角ひとつに朝日が当たってるんだよね。"
         }
       ]
     },

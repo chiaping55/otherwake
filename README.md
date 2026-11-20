@@ -52,8 +52,7 @@ It runs end to end on one consumer GPU.
 
 **What is in this repo:** the code, the workflows, and the text record of the author's own
 runs — 42 agents and about 1,200 segments in [logs/](logs/), each with its prompt and its
-English thought, and Traditional Chinese and Japanese translations for roughly three quarters
-of them. The generated images and videos (several GB) are not included, so a fresh clone shows
+thought in English, Traditional Chinese and Japanese. The generated images and videos (several GB) are not included, so a fresh clone shows
 the logs without media until you generate your own.
 
 **Status:** not under active development. Everything below describes the stack it was built
