@@ -117,10 +117,15 @@ existing one.
   custom nodes), with these model files:
   - video ([workflows/video_ltx2.3_t2v.json](workflows/video_ltx2.3_t2v.json)):
     `ltx-2.3-22b-dev-fp8`, `ltx-2.3-22b-distilled-lora-384`,
-    `ltx-2.3-spatial-upscaler-x2-1.0`, and the text encoder `gemma_3_12B_it_fp4_mixed` with
+    `ltx-2.3-spatial-upscaler-x2-1.1`, and the text encoder `gemma_3_12B_it_fp4_mixed` with
     `gemma-3-12b-it-abliterated_lora_rank64_bf16`
   - image ([workflows/image_z_image_turbo_t2i.json](workflows/image_z_image_turbo_t2i.json)):
     `z_image_turbo_bf16`, text encoder `qwen_3_4b`, VAE `ae`
+
+  You don't have to fetch these by hand: the setup step lists whichever are missing and
+  offers to download them from their Hugging Face repositories (about 68 GB for all eight,
+  no account needed, resumable, checksum-verified). Sources and pinned revisions are in
+  [driver/model_files.py](driver/model_files.py).
 - **ffmpeg** on PATH, or its location set as `ffmpeg_path` in `config.json` (the setup helper
   looks for it)
 
@@ -130,8 +135,8 @@ The bottleneck is LTX 2.3 on your GPU; the agent layer is lightweight.
 
 | | VRAM | RAM | Disk | Per-clip time |
 |---|---|---|---|---|
-| **Minimum (barely fits)** | 12 GB | 16 GB | ~40 GB | 6–8 min / 8s clip |
-| **Comfortable** | 16–24 GB | 32 GB | ~60 GB | 4–5 min / 8s clip |
+| **Minimum (barely fits)** | 12 GB | 16 GB | ~80 GB (models are 68 GB) | 6–8 min / 8s clip |
+| **Comfortable** | 16–24 GB | 32 GB | ~100 GB | 4–5 min / 8s clip |
 | **With Ollama on CPU** | same | **add 8–64 GB** depending on vision model | +5–50 GB for models | +30s–3 min per tick for vision thinking |
 
 Ollama vision models load into system RAM when running on CPU — see the
@@ -145,6 +150,7 @@ stays off the GPU; RAM is where it lives instead.
 - find a Python 3.10+ on your machine (or tell you to install one)
 - search common locations for ComfyUI and write `config.json` for you
 - auto-detect ffmpeg, verify workflows + folder permissions
+- check that ComfyUI has the model files, and offer to download any that are missing
 - start ComfyUI in its own window if it isn't already running
 - start the viewer (`driver/serve.py`) on port 8787
 - open `http://127.0.0.1:8787/www/` in your default browser
@@ -161,6 +167,7 @@ If you prefer the terminal:
 python driver/_launch.py           # same flow, no bat
 python driver/setup.py             # just verify the setup, don't launch anything
 python driver/setup.py --no-fix    # check only, never write config.json
+python driver/setup.py --download-models   # fetch missing model files without asking
 ```
 
 `setup.py` prints a green ✓ or a specific fix for each part of the pipeline — useful when something's broken.

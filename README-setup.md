@@ -15,10 +15,14 @@ logged to `logs/session.json` and shown in the web viewer at `www/index.html`.
   - `loras/ltx-2.3-22b-distilled-lora-384.safetensors`
   - `loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors`
   - `text_encoders/gemma_3_12B_it_fp4_mixed.safetensors`
-  - `latent_upscale_models/ltx-2.3-spatial-upscaler-x2-1.0.safetensors`
+  - `latent_upscale_models/ltx-2.3-spatial-upscaler-x2-1.1.safetensors`
   - for text-to-image ([workflows/image_z_image_turbo_t2i.json](workflows/image_z_image_turbo_t2i.json)):
-    `z_image_turbo_bf16.safetensors`, `qwen_3_4b.safetensors`, `ae.safetensors`
+    `diffusion_models/z_image_turbo_bf16.safetensors`, `text_encoders/qwen_3_4b.safetensors`,
+    `vae/ae.safetensors`
 
+  About 68 GB in total. You can leave this to the setup step: it lists the files that are
+  missing and offers to download them (`python driver/setup.py --download-models` does it
+  without asking). Downloads resume if interrupted and are checked against a known SHA-256.
   File names must match the workflow JSONs; if yours differ, edit the JSON or rename the file.
 - **ffmpeg** on PATH (or set `ffmpeg_path` in `config.json`)
 - **A model to be the agent** — any one of: Claude Code, Ollama with a vision model pulled, or
@@ -29,13 +33,14 @@ The folder layout is described in the main [README](README.md#repository-layout)
 ## Move to a new machine — quick steps
 
 1. **Copy the whole project folder** to the new machine. Keep everything under one root.
-2. **Install ComfyUI portable** somewhere, copy/reinstall the models listed above.
+2. **Install ComfyUI portable** somewhere. Copy the models listed above if you already have
+   them; otherwise the next step can download them.
 3. **Double-click `start.bat`** in the project root. That's the whole setup procedure.
    It will:
      - find Python on your machine (or tell you to install it)
      - search common locations for your ComfyUI portable install (with several installs
        on one machine, it picks the one that holds the model files listed above)
-     - list any of those model files that are missing
+     - list any of those model files that are missing, and offer to download them
      - auto-detect ffmpeg
      - write `config.json` for you (no prompts — just picks the first ComfyUI it finds)
      - check `input/`, `output/`, ffmpeg, workflows, folder permissions

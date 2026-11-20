@@ -10,6 +10,7 @@ CLI options:
     python driver/setup.py             # auto-detect + interactive prompt before writing
     python driver/setup.py --auto-fix  # write config.json automatically (no prompt)
     python driver/setup.py --no-fix    # only check, never write anything
+    python driver/setup.py --download-models   # fetch missing model files without asking
 """
 from __future__ import annotations
 import argparse
@@ -20,6 +21,9 @@ import string
 import sys
 from pathlib import Path
 from urllib import error, request
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import model_files  # noqa: E402
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -346,21 +350,83 @@ def check_ffmpeg(cfg: dict, comfy_root: Path | None) -> bool:
     return False
 
 
-def check_models(comfy_root: Path) -> None:
-    """Warn about model files the workflows need but this install lacks.
-    A warning, not a blocker: models can also live outside models/ via
-    ComfyUI's extra_model_paths.yaml, which this check doesn't read."""
+def models_root_of(comfy_root: Path) -> Path:
+    nested = comfy_root / "ComfyUI" / "models"
+    return nested if nested.is_dir() or (comfy_root / "ComfyUI").is_dir() else comfy_root / "models"
+
+
+def check_models(comfy_root: Path, download: str) -> None:
+    """Report model files the workflows need but this install lacks, and
+    offer to download them.
+
+    `download` is "yes" (download without asking), "ask" (prompt when run
+    from a terminal) or "no". Missing files are a warning, not a blocker:
+    models can also live outside models/ via ComfyUI's extra_model_paths.yaml,
+    which this check doesn't read.
+    """
     needed = required_model_files()
     missing = missing_model_files(comfy_root)
     if not missing:
         say(OK_MARK, f"all {len(needed)} model files the workflows need are installed")
         return
+
+    known = [model_files.MODEL_FILES[n] for n in missing if n in model_files.MODEL_FILES]
+    unknown = [n for n in missing if n not in model_files.MODEL_FILES]
+    total = sum(m.size for m in known)
+    lines = [f"  - {m.name}  ({model_files.gb(m.size)})  → models/{m.folder}/" for m in known]
+    lines += [f"  - {n}  (no download source on record — find it yourself)" for n in unknown]
     say(WN_MARK, f"{len(missing)} of {len(needed)} model files not found under {comfy_root}",
-        "Generation will fail until these are in ComfyUI's models/ folders:\n"
-        + "\n".join(f"  - {n}" for n in missing) + "\n"
-        "See README-setup.md for which subfolder each goes in. If they live elsewhere\n"
-        "via extra_model_paths.yaml, or comfy_root points at the wrong install, ignore\n"
-        "this or fix comfy_root in config.json.")
+        "Generation will fail until these are in place:\n" + "\n".join(lines) + "\n"
+        "If they live elsewhere via extra_model_paths.yaml, or comfy_root points at the\n"
+        "wrong install, ignore this or fix comfy_root in config.json.")
+    if not known or download == "no":
+        return
+
+    root = models_root_of(comfy_root)
+    free = model_files.free_bytes(root)
+    pages = sorted({m.page for m in known})
+    print()
+    print(f"      These can be downloaded from Hugging Face ({model_files.gb(total)} in total,")
+    print(f"      {model_files.gb(free)} free on that drive). No account needed. Each file is")
+    print("      published under its own licence — see:")
+    for p in pages:
+        print(f"        {p}")
+    if free < total + 2 * 10**9:
+        say(NO_MARK, "not enough free disk space for the download — free some up and re-run")
+        return
+    if download == "ask":
+        if not sys.stdin.isatty():
+            print(f"      To download them, run:  python driver/setup.py --download-models")
+            return
+        try:
+            ans = input(f"      download {len(known)} file(s), {model_files.gb(total)}, now? [y/N]: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            ans = ""
+        if ans not in ("y", "yes"):
+            print("      skipped. Run  python driver/setup.py --download-models  whenever you're ready.")
+            return
+
+    for i, m in enumerate(known, 1):
+        print(f"      [{i}/{len(known)}] {m.name}")
+        def report(line: str) -> None:
+            print(f"\r          {line:<70}", end="", flush=True)
+        try:
+            dest = model_files.download(m, root, report)
+        except model_files.DownloadError as e:
+            print()
+            say(NO_MARK, str(e))
+            return
+        except KeyboardInterrupt:
+            print()
+            say(WN_MARK, "download interrupted — run again to resume where it stopped")
+            return
+        print(f"\r          {'done, checksum ok → ' + str(dest):<70}")
+    still = missing_model_files(comfy_root)
+    if still:
+        say(WN_MARK, f"still missing: {', '.join(still)}")
+    else:
+        say(OK_MARK, f"all {len(needed)} model files the workflows need are installed")
+        print("      (if ComfyUI is already running, restart it so it sees the new files)")
 
 
 def check_workflows() -> bool:
@@ -444,8 +510,11 @@ def main() -> int:
     parser.add_argument("--auto-fix", action="store_true",
                         help="if config.json is missing, write it automatically without asking")
     parser.add_argument("--no-fix", action="store_true",
-                        help="never write config.json (check only)")
+                        help="never write config.json or download anything (check only)")
+    parser.add_argument("--download-models", action="store_true",
+                        help="download any missing model files without asking")
     args = parser.parse_args()
+    download = "no" if args.no_fix else ("yes" if args.download_models else "ask")
 
     print()
     print(BOLD("otherwake setup — checking your environment"))
@@ -463,7 +532,7 @@ def main() -> int:
     if comfy_root:
         required_ok &= check_comfy_subdirs(comfy_root)
         required_ok &= check_ffmpeg(cfg, comfy_root)
-        check_models(comfy_root)
+        check_models(comfy_root, download)
     else:
         required_ok = False
     required_ok &= check_workflows()

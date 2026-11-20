@@ -86,8 +86,10 @@
   其他多模態 agent 只要有讀檔 + 讀圖能力都可以改接，driver 是純 Python。
 
 - **ComfyUI portable**，版本要新到內建 LTX 2.3 的原生節點（workflow 沒有用任何 custom node），並放好這些模型檔：
-  - 影片（[workflows/video_ltx2.3_t2v.json](workflows/video_ltx2.3_t2v.json)）：`ltx-2.3-22b-dev-fp8`、`ltx-2.3-22b-distilled-lora-384`、`ltx-2.3-spatial-upscaler-x2-1.0`，文字編碼器 `gemma_3_12B_it_fp4_mixed` 加上 `gemma-3-12b-it-abliterated_lora_rank64_bf16`
+  - 影片（[workflows/video_ltx2.3_t2v.json](workflows/video_ltx2.3_t2v.json)）：`ltx-2.3-22b-dev-fp8`、`ltx-2.3-22b-distilled-lora-384`、`ltx-2.3-spatial-upscaler-x2-1.1`，文字編碼器 `gemma_3_12B_it_fp4_mixed` 加上 `gemma-3-12b-it-abliterated_lora_rank64_bf16`
   - 圖片（[workflows/image_z_image_turbo_t2i.json](workflows/image_z_image_turbo_t2i.json)）：`z_image_turbo_bf16`、文字編碼器 `qwen_3_4b`、VAE `ae`
+
+  這些不必手動去抓：環境檢查會列出缺少的檔案，並詢問要不要從各自的 Hugging Face repo 下載（八個檔共約 68 GB，不需帳號、可續傳、下載後驗證校驗碼）。來源和鎖定的版本寫在 [driver/model_files.py](driver/model_files.py)。
 - **ffmpeg**：放在 PATH 裡，或在 `config.json` 用 `ffmpeg_path` 指定位置（環境檢查會幫你找）
 
 ### 硬體需求
@@ -96,8 +98,8 @@
 
 | | VRAM | RAM | 磁碟 | 每段時間 |
 |---|---|---|---|---|
-| **最低（勉強塞得下）** | 12 GB | 16 GB | ~40 GB | 6–8 分鐘 / 8 秒影片 |
-| **舒適** | 16–24 GB | 32 GB | ~60 GB | 4–5 分鐘 / 8 秒影片 |
+| **最低（勉強塞得下）** | 12 GB | 16 GB | ~80 GB（模型就佔 68 GB） | 6–8 分鐘 / 8 秒影片 |
+| **舒適** | 16–24 GB | 32 GB | ~100 GB | 4–5 分鐘 / 8 秒影片 |
 | **加上 Ollama（CPU 模式）** | 不變 | **多 8–64 GB**，視模型大小 | 多 5–50 GB 存模型 | 每 tick 多 30 秒–3 分鐘給視覺思考 |
 
 Ollama 視覺模型跑 CPU 模式時會載到系統 RAM —— 看 [用 Ollama 跑](#用-ollama-跑)。VRAM 消耗不變，因為 Ollama 不佔 GPU；它住在 RAM 裡。
@@ -109,6 +111,7 @@ Ollama 視覺模型跑 CPU 模式時會載到系統 RAM —— 看 [用 Ollama �
 - 找你電腦上的 Python 3.10+（沒裝會告訴你怎麼裝）
 - 在常見位置搜你的 ComfyUI portable，幫你**自動產生 config.json**
 - 自動偵測 ffmpeg、檢查 workflows、檢查資料夾權限
+- 檢查 ComfyUI 裡有沒有需要的模型檔，缺的會問你要不要下載
 - ComfyUI 沒開的話會幫你開（在它自己的視窗裡）
 - 啟動 viewer（`driver/serve.py`）在 8787 port
 - 用預設瀏覽器開 `http://127.0.0.1:8787/www/`
@@ -125,6 +128,7 @@ Ollama 視覺模型跑 CPU 模式時會載到系統 RAM —— 看 [用 Ollama �
 python driver/_launch.py           # 同樣的流程，不用 bat
 python driver/setup.py             # 只驗證環境，不啟動任何東西
 python driver/setup.py --no-fix    # 只檢查、不寫 config.json
+python driver/setup.py --download-models   # 不詢問，直接下載缺少的模型檔
 ```
 
 `setup.py` 會幫每個項目打綠 ✓ 或列出具體的修法 —— 東西壞掉時跑這個。
