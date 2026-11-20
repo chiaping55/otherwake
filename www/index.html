@@ -1,0 +1,1887 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>otherwake — journey log</title>
+<style>
+  :root {
+    --bg: #0b0b0d;
+    --card: #16161a;
+    --card2: #1c1c22;
+    --border: #262630;
+    --border2: #333340;
+    --text: #e8e8ea;
+    --muted: #8b8b95;
+    --muted2: #6a6a74;
+    --accent: #f5a623;
+    --t2i: #4a9eff;
+    --i2v: #b06bff;
+    --t2v: #ff6b9e;
+    --desc: #39c26a;
+    --fail: #ff5547;
+    --ok: #39c26a;
+  }
+  * { box-sizing: border-box; }
+  html,body { margin:0; padding:0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, "Microsoft JhengHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }
+  a { color: var(--t2i); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---- header ---- */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,11,13,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-row {
+    padding: 12px 24px;
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  h1 { margin: 0; font-size: 18px; font-weight: 600; }
+  h1 span { color: var(--accent); font-weight: 400; }
+  .status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 16px;
+    font-size: 12px; font-family: ui-monospace, Menlo, monospace;
+    background: var(--card2); border: 1px solid var(--border2);
+  }
+  .status .dot { width:8px; height:8px; border-radius:50%; background: var(--muted2); }
+  .status.live .dot { background: var(--fail); animation: pulse 1.4s ease-in-out infinite; }
+  .status.idle .dot { background: var(--ok); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .stats { display: flex; gap: 14px; color: var(--muted); font-size: 12px; font-family: ui-monospace, Menlo, monospace; margin-left: auto; }
+  .stats b { color: var(--text); font-weight: 600; }
+  .btn {
+    background: var(--accent); color: #1a1a1a;
+    border: 0; padding: 6px 14px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn.secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border2); }
+
+  /* ---- agents strip ---- */
+  .agents-wrap {
+    border-top: 1px solid var(--border);
+    padding: 8px 24px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .agents-filter {
+    flex: 0 0 auto; align-self: center;
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--text); font-size: 12px;
+    padding: 5px 10px; border-radius: 6px;
+    font-family: ui-monospace, Menlo, monospace;
+    width: 130px;
+  }
+  .agents-filter::placeholder { color: var(--muted2); }
+  .agents-filter:focus { outline: none; border-color: var(--accent); }
+  .agents-pager {
+    flex: 1 1 auto; min-width: 0;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .pager-btn {
+    flex: 0 0 auto; align-self: center;
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--muted); font-size: 14px; line-height: 1;
+    width: 24px; height: 24px; border-radius: 6px;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .pager-btn:hover:not(:disabled) { color: var(--text); border-color: var(--border2); }
+  .pager-btn:disabled { opacity: 0.25; cursor: default; }
+  .agents {
+    flex: 1 1 auto; min-width: 0;
+    display: flex; flex-wrap: nowrap; gap: 16px;
+    overflow-x: auto; overflow-y: hidden;
+    padding: 6px 4px;
+    scroll-behavior: smooth;
+    /* hide native scrollbar — pager buttons do the navigation */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .agents::-webkit-scrollbar { display: none; }
+  .agent-group-sep {
+    width: 1px; background: var(--border);
+    margin: 0 6px; flex: 0 0 auto; align-self: stretch;
+  }
+  /* compact mode hides the English reading half of "字 · english" */
+  body.compact-agents .agent-tab .alabel-reading { display: none; }
+  .compact-toggle {
+    flex: 0 0 auto; align-self: center;
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--muted); font-size: 11px; padding: 5px 8px;
+    border-radius: 6px; cursor: pointer;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .compact-toggle:hover { color: var(--text); border-color: var(--border2); }
+  .compact-toggle.on { background: rgba(245,166,35,0.15); color: var(--accent); border-color: var(--accent); }
+  .agent-tab {
+    flex: 0 0 auto; cursor: pointer;
+    padding: 5px 12px; border-radius: 16px;
+    background: var(--card2); border: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: ui-monospace, Menlo, monospace;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .agent-tab.hidden { display: none; }
+  .agent-tab:hover { color: var(--text); border-color: var(--border2); }
+  .agent-tab.active { background: rgba(245,166,35,0.15); color: var(--accent); border-color: var(--accent); }
+  /* Pin the currently-wandering agent to the left edge of the scrollable strip
+     so it stays one click away even when the user pages through older agents. */
+  .agent-tab.live {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    box-shadow: 6px 0 10px -6px rgba(0,0,0,0.55);
+  }
+  .agent-tab .adot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted2); flex: 0 0 auto; }
+  .agent-tab.live .adot { background: var(--ok); animation: pulse 1.8s ease-in-out infinite; }
+  .agent-tab.rested .adot { background: var(--muted2); }
+  .agent-tab .acount { color: var(--muted2); font-size: 11px; }
+  .agent-tab.active .acount { color: var(--accent); opacity: 0.7; }
+
+  .agent-banner {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 22px; margin-bottom: 24px;
+  }
+  .agent-banner .aname {
+    font-size: 18px; font-weight: 600; color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .agent-banner .ameta {
+    font-size: 11px; color: var(--muted2); margin-top: 4px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  /* ---- journey section ---- */
+  .journey-section { margin-bottom: 32px; }
+  .journey-section-head {
+    padding: 12px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .journey-section-head .jid {
+    font-family: ui-monospace, Menlo, monospace;
+    font-weight: 600; color: var(--accent); font-size: 13px;
+  }
+  .journey-section-head .jmeta {
+    font-size: 11px; color: var(--muted2);
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .journey-section-head .jstatus {
+    margin-left: auto; font-size: 11px;
+    font-family: ui-monospace, Menlo, monospace;
+    color: var(--muted);
+  }
+  .journey-section-head .jstatus.live { color: var(--ok); }
+  .journey-section-head .jsummary {
+    flex-basis: 100%; margin-top: 6px;
+    font-size: 13px; color: #d6d6dc; line-height: 1.65;
+    padding: 10px 14px; border-left: 3px solid var(--border2);
+    background: rgba(255,255,255,0.02); border-radius: 0 4px 4px 0;
+  }
+  .nav-journey-sep {
+    flex: 0 0 auto;
+    display: flex; align-items: center;
+    padding: 0 10px;
+    color: var(--muted2);
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    border-left: 1px dashed var(--border2);
+    height: 50px;
+  }
+  .nav-journey-sep.first { border-left: 0; padding-left: 0; }
+
+  /* ---- nav strip ---- */
+  .nav-pager {
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 12px; border-top: 1px solid var(--border);
+  }
+  .nav-pager .pager-btn { width: 28px; height: 50px; }
+  .nav {
+    flex: 1 1 auto; min-width: 0;
+    display: flex; gap: 16px; padding: 14px 4px;
+    overflow-x: auto;
+    cursor: grab;
+    /* hide native scrollbar — pager buttons + drag do the navigation */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-behavior: smooth;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav.dragging, .agents.dragging { cursor: grabbing; user-select: none; }
+  .agents { cursor: grab; }
+  .nav a {
+    flex: 0 0 auto;
+    width: 88px; height: 50px;
+    border-radius: 4px; overflow: hidden;
+    background: var(--card2); position: relative;
+    border: 1px solid var(--border);
+    text-decoration: none;
+  }
+  .nav a img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85; }
+  .nav a:hover img { opacity: 1; }
+  .nav a.failed { border-color: var(--fail); }
+  .nav a.failed img { opacity: 0.3; filter: grayscale(0.8); }
+  .nav a .lbl {
+    position: absolute; left: 3px; bottom: 2px;
+    font-size: 9px; font-family: ui-monospace, Menlo, monospace;
+    color: #fff; text-shadow: 0 0 3px #000, 0 0 3px #000;
+    letter-spacing: 0.3px;
+  }
+
+  /* ---- body ---- */
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px 24px 100px; }
+
+  /* ---- segment ---- */
+  .segment {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+    scroll-margin-top: 140px;
+    position: relative;
+  }
+  .segment.failed {
+    border-color: rgba(255,85,71,0.4);
+    background: linear-gradient(var(--card), var(--card)), rgba(255,85,71,0.04);
+  }
+  .segment.replaced-by { opacity: 0.55; }
+  .segment .replaced-banner {
+    background: rgba(255,85,71,0.1); border-bottom: 1px solid rgba(255,85,71,0.25);
+    padding: 8px 20px; font-size: 12px; color: #ffb0a8;
+  }
+  .seg-head {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .badge {
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge.t2i { background: rgba(74,158,255,0.15); color: var(--t2i); }
+  .badge.i2v { background: rgba(176,107,255,0.15); color: var(--i2v); }
+  .badge.t2v { background: rgba(255,107,158,0.15); color: var(--t2v); }
+  .badge.desc { background: rgba(57,194,106,0.15); color: var(--desc); }
+  .badge.fail { background: rgba(255,85,71,0.15); color: var(--fail); }
+  .seg-id { color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .seg-time { color: var(--muted); margin-left: auto; font-family: ui-monospace, Menlo, monospace; font-size: 11px; }
+  .tag {
+    padding: 1px 6px; border-radius: 3px; font-size: 10px;
+    background: var(--card2); color: var(--muted); border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .tag:hover { color: var(--text); border-color: var(--border2); }
+  .tag.active { background: rgba(245,166,35,0.2); color: var(--accent); border-color: var(--accent); }
+
+  .seg-body {
+    display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 0;
+  }
+  @media (max-width: 900px) { .seg-body { grid-template-columns: 1fr; } }
+  .seg-media {
+    background: #000; display:flex; align-items:center; justify-content:center;
+    min-height: 200px; position: relative;
+  }
+  .seg-media video, .seg-media img {
+    width: 100%; height: auto; display: block; max-height: 60vh; object-fit: contain;
+  }
+  .source-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+    border: 1px solid var(--border2); border-radius: 6px;
+    padding: 4px 8px; display: flex; align-items: center; gap: 6px;
+    font-size: 10px; color: var(--muted); font-family: ui-monospace, monospace;
+  }
+  .source-badge img { width: 32px; height: 20px; object-fit: cover; border-radius: 2px; max-height: none !important; }
+
+  .seg-text {
+    padding: 18px 22px;
+    display: flex; flex-direction: column; gap: 14px;
+    border-left: 1px solid var(--border);
+  }
+  @media (max-width: 900px) { .seg-text { border-left: 0; border-top: 1px solid var(--border); } }
+  .label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--muted2); margin-bottom: 3px;
+  }
+  .thought-block {
+    font-size: 14px; color: #f5d38a;
+    background: rgba(245,166,35,0.06);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    white-space: pre-wrap; line-height: 1.65;
+  }
+  .prompt-wrap details > summary {
+    cursor: pointer; color: var(--muted); font-size: 12px;
+    padding: 6px 10px; background: var(--card2); border-radius: 4px;
+    border: 1px solid var(--border); user-select: none;
+    list-style: none;
+  }
+  .prompt-wrap details > summary::before { content: "▸ "; color: var(--muted2); }
+  .prompt-wrap details[open] > summary::before { content: "▾ "; }
+  .prompt {
+    font-size: 13px; white-space: pre-wrap; word-wrap: break-word;
+    color: #c5c5cc; padding: 10px 2px 2px 2px; line-height: 1.55;
+  }
+  .failure-block {
+    background: rgba(255,85,71,0.08); border-left: 3px solid var(--fail);
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    font-size: 13px; color: #ffb0a8; white-space: pre-wrap;
+  }
+  .note-block {
+    background: rgba(74,158,255,0.06); border-left: 3px solid var(--t2i);
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    font-size: 12px; color: #bcd7ff; white-space: pre-wrap;
+  }
+  .kv {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 11px; color: var(--muted);
+    font-family: ui-monospace, Menlo, monospace;
+    padding-top: 6px; border-top: 1px dashed var(--border);
+  }
+  .kv span b { color: var(--text); font-weight: 600; margin-left: 3px; }
+
+  /* ---- language switch ---- */
+  .lang {
+    display: inline-flex; gap: 2px;
+    background: var(--card2); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 2px; font-size: 12px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .lang button {
+    background: transparent; color: var(--muted);
+    border: 0; padding: 4px 10px; border-radius: 4px;
+    cursor: pointer; font-size: 12px; font-family: inherit;
+    transition: all 0.12s;
+  }
+  .lang button:hover { color: var(--text); }
+  .lang button.active { background: var(--accent); color: #1a1a1a; font-weight: 600; }
+  .missing-lang {
+    font-size: 10px; color: var(--muted2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-left: 6px; font-family: ui-monospace, Menlo, monospace;
+  }
+
+  .empty { text-align: center; color: var(--muted); padding: 80px 20px; }
+  .empty code { background: var(--card); padding: 2px 6px; border-radius: 4px; }
+
+  /* ---- play-all overlay ---- */
+  .pa-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    z-index: 200; display: none; flex-direction: column;
+  }
+  .pa-overlay.open { display: flex; }
+  .pa-head {
+    padding: 12px 20px; display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: ui-monospace, monospace; font-size: 13px;
+  }
+  .pa-head .close { margin-left: auto; }
+  .pa-body {
+    flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .pa-body video, .pa-body img { max-width: 100%; max-height: 100%; }
+  .pa-info {
+    padding: 10px 20px; font-size: 13px; color: var(--muted);
+    font-family: ui-monospace, monospace; border-top: 1px solid var(--border);
+    max-height: 120px; overflow-y: auto;
+  }
+  .pa-info b { color: var(--accent); }
+
+  /* ---- export modal ---- */
+  .export-btn {
+    margin-left: 8px;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); padding: 2px 8px;
+    font-size: 12px; cursor: pointer; border-radius: 3px;
+  }
+  .export-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .export-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 300; display: none; align-items: center; justify-content: center;
+  }
+  .export-overlay.open { display: flex; }
+  .export-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 24px; width: min(520px, 92vw);
+    color: var(--fg); font-size: 14px;
+  }
+  .export-card h3 { margin: 0 0 14px 0; font-size: 16px; color: var(--accent); }
+  .export-card .row { display: flex; gap: 12px; align-items: center; margin: 10px 0; }
+  .export-card .row label { color: var(--muted); min-width: 80px; }
+  .export-card select, .export-card input[type=text] {
+    background: var(--bg); color: var(--fg); border: 1px solid var(--border);
+    padding: 4px 8px; border-radius: 3px; font-size: 13px;
+  }
+  .export-card .info { color: var(--muted); font-size: 12px; margin: 8px 0; line-height: 1.5; }
+  .export-card .actions { margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end; }
+  .export-card .log {
+    margin-top: 14px; background: var(--bg); border: 1px solid var(--border);
+    padding: 8px 10px; border-radius: 3px; max-height: 240px; overflow-y: auto;
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted);
+    white-space: pre-wrap; line-height: 1.4;
+  }
+  .export-card .log:empty { display: none; }
+
+  /* ---- run panel (browser-driven journey control) ---- */
+  #run-toggle.on { background: rgba(245,166,35,0.15); color: var(--accent); border-color: var(--accent); }
+  .run-panel {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    background: var(--card);
+    flex-direction: column; gap: 10px;
+  }
+  body.run-open .run-panel { display: flex; }
+  .run-row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+  }
+  .run-row label { color: var(--muted); font-size: 11px; }
+  .run-row select, .run-row input[type="text"] {
+    background: var(--card2); border: 1px solid var(--border);
+    color: var(--text); padding: 5px 8px; border-radius: 6px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+  }
+  .run-row input[type="text"] { flex: 1 1 240px; min-width: 180px; }
+  .run-row select:focus, .run-row input:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .run-row .btn { padding: 5px 14px; }
+  .run-row .btn.wake { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .run-row .btn.wake:hover { filter: brightness(1.1); }
+  .run-row .btn.danger { color: #ff8a76; }
+  .run-row .btn.danger:hover { background: #5a2620; color: #fff; border-color: #c0392b; }
+  .run-row .btn:disabled { opacity: 0.4; cursor: default; }
+  .translate-checks { display: inline-flex; gap: 10px; align-items: center; }
+  .translate-checks .cb {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--muted); font-size: 12px; cursor: pointer;
+    user-select: none;
+  }
+  .translate-checks .cb input { accent-color: var(--accent); margin: 0; }
+  .translate-checks .cb input:checked + * { color: var(--text); }
+  .run-state {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 10px;
+    color: var(--muted); font-size: 12px;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .run-state.live { border-color: var(--accent); color: var(--text); }
+  .run-state b { color: var(--accent); }
+  .run-state .err { color: #ff6b6b; }
+
+  /* ---- model + scope badges (per-journey identity, prominent for cross-model comparison) ---- */
+  .model-badge, .scope-badge {
+    display: inline-block; padding: 3px 9px; border-radius: 12px;
+    font: 600 12px/1.4 ui-monospace, Menlo, monospace;
+    margin-left: 8px; vertical-align: middle;
+    border: 1px solid transparent;
+  }
+  .model-badge { background: #2d2d2d; color: #ddd; border-color: #444; }
+  .model-badge.fam-claude  { background: #4a2818; color: #ffb37a; border-color: #7a3f1c; }
+  .model-badge.fam-qwen    { background: #14333a; color: #7adde6; border-color: #1f5560; }
+  .model-badge.fam-llama   { background: #321a3d; color: #c79bff; border-color: #4a2966; }
+  .model-badge.fam-gemma   { background: #173523; color: #87e3a3; border-color: #275a3c; }
+  .model-badge.fam-minicpm { background: #3a1c2c; color: #ff9bc1; border-color: #5e2745; }
+  .model-badge.fam-gpt     { background: #133329; color: #6dffaf; border-color: #205642; }
+  .model-badge.fam-gemini  { background: #16243f; color: #8fb8ff; border-color: #27406e; }
+  .scope-badge { background: #2a2a2a; color: #cba; border-color: #444; }
+  .scope-badge::before { content: "scope: "; opacity: 0.6; font-weight: 400; }
+
+  /* ---- edit mode ---- */
+  #edit-toggle.on { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .edit-controls { display: none; align-items: center; gap: 4px; margin-left: 6px; }
+  .edit-mode .edit-controls { display: inline-flex; }
+  .edit-controls button {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    width: 22px; height: 22px; border-radius: 4px; padding: 0; line-height: 1;
+    cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .edit-controls button:hover { background: var(--card); color: var(--text); }
+  .edit-controls button.danger:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .agent-tab .edit-controls { gap: 2px; }
+  .agent-tab .edit-controls button { width: 18px; height: 18px; font-size: 10px; }
+  .edit-pencil {
+    display: none; background: transparent; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 4px; padding: 1px 6px; font-size: 11px; cursor: pointer; margin-left: 6px; vertical-align: middle;
+  }
+  .edit-mode .edit-pencil { display: inline-block; }
+  .edit-pencil:hover { background: var(--card); color: var(--text); }
+
+  /* ---- edit modal ---- */
+  .edit-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 300; display: none; align-items: center; justify-content: center;
+  }
+  .edit-overlay.open { display: flex; }
+  .edit-dialog {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    width: min(720px, 92vw); max-height: 88vh; padding: 18px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .edit-dialog h3 { margin: 0; font-size: 14px; font-family: ui-monospace, monospace; color: var(--accent); }
+  .edit-dialog .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-top: 6px; }
+  .edit-dialog textarea {
+    width: 100%; min-height: 70px; box-sizing: border-box;
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    color: var(--text); font: 13px/1.5 ui-monospace, monospace; padding: 8px; resize: vertical;
+  }
+  .edit-dialog .row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+  .edit-dialog .row button { padding: 6px 14px; }
+  .edit-dialog .row .save { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div class="top-row">
+    <h1>otherwake<span> · journey log</span></h1>
+    <div class="status idle" id="status"><span class="dot"></span><span id="status-text">idle</span></div>
+    <div class="stats" id="stats">loading…</div>
+    <div class="lang" id="lang-switch">
+      <button data-lang="en">EN</button>
+      <button data-lang="zh">繁</button>
+      <button data-lang="ja">日</button>
+    </div>
+    <button class="btn" id="playall">▶ Play All</button>
+    <button class="btn secondary" id="run-toggle" title="Browser-driven journeys: pick a model, type a place, press Wake">▶ Run</button>
+    <button class="btn secondary" id="edit-toggle" title="Toggle edit mode (delete / reorder / rename / edit text)">✎ Edit</button>
+  </div>
+  <div class="run-panel" id="run-panel">
+    <div class="run-row">
+      <label>Mode</label>
+      <select id="run-mode">
+        <option value="offline">Offline (local)</option>
+        <option value="online">Online (API)</option>
+      </select>
+      <label>Provider</label>
+      <select id="run-provider"></select>
+      <label>Model</label>
+      <select id="run-model"><option value="">loading…</option></select>
+      <span class="run-gpu-group" id="run-gpu-wrap">
+        <label title="Ollama only: -1 = use GPU, 0 = CPU only (no VRAM, slower)">GPU</label>
+        <select id="run-numgpu">
+          <option value="-1">all-GPU</option>
+          <option value="0">CPU only</option>
+        </select>
+      </span>
+      <button class="btn secondary" id="run-key-btn" title="Set the API key for the selected online provider" style="display:none">🔑 Set key</button>
+      <label title="Translate thoughts + summary at rest. Off by default — costs an extra API call per segment.">Translate</label>
+      <span class="translate-checks">
+        <label class="cb"><input type="checkbox" id="run-tr-zh"> 繁中</label>
+        <label class="cb"><input type="checkbox" id="run-tr-ja"> 日本語</label>
+      </span>
+      <label id="run-trmodel-label" title="Model to use for the translation pass. Defaults to the trip model. Big trip drivers (qwen3-vl:30b) often time out translating themselves — pair with a smaller dedicated translator like gemma3:27b." style="display:none">via</label>
+      <select id="run-trmodel" style="display:none">
+        <option value="">same as trip model</option>
+      </select>
+    </div>
+    <div class="run-row">
+      <label>Wake / scope</label>
+      <input type="text" id="run-scope" placeholder="empty = open trip · or type a place / theme: Taipei · medieval · somewhere cold" autocomplete="off" />
+      <button class="btn wake" id="run-wake">▶ Wake</button>
+      <button class="btn secondary" id="run-rest" title="Graceful: finish current segment, then rest">⏸ Rest</button>
+      <button class="btn danger" id="run-stop" title="Graceful stop after current segment">⏹ Stop</button>
+    </div>
+    <div class="run-state" id="run-state">idle</div>
+  </div>
+  <div class="agents-wrap">
+    <input class="agents-filter" id="agents-filter" type="text" placeholder="filter agents…" autocomplete="off" />
+    <button class="compact-toggle" id="compact-toggle" title="Compact mode: hide English readings, show just the character">字</button>
+    <div class="agents-pager">
+      <button class="pager-btn" id="pager-prev" title="previous page" aria-label="previous">‹</button>
+      <div class="agents" id="agents"></div>
+      <button class="pager-btn" id="pager-next" title="next page" aria-label="next">›</button>
+    </div>
+  </div>
+  <div class="nav-pager">
+    <button class="pager-btn" id="nav-prev" title="previous page" aria-label="previous">‹</button>
+    <div class="nav" id="nav"></div>
+    <button class="pager-btn" id="nav-next" title="next page" aria-label="next">›</button>
+  </div>
+</header>
+<div class="container" id="root">
+  <div class="empty">loading…</div>
+</div>
+
+<div class="edit-overlay" id="edit-overlay">
+  <div class="edit-dialog">
+    <h3 id="edit-title">Edit</h3>
+    <div class="label" id="edit-label-en">English</div>
+    <textarea id="edit-en"></textarea>
+    <div class="label">繁體中文</div>
+    <textarea id="edit-zh"></textarea>
+    <div class="label">日本語</div>
+    <textarea id="edit-ja"></textarea>
+    <div class="row">
+      <button class="btn secondary" id="edit-cancel">Cancel</button>
+      <button class="btn save" id="edit-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="pa-overlay" id="pa-overlay">
+  <div class="pa-head">
+    <span id="pa-counter">1 / 1</span>
+    <span id="pa-id" style="color:var(--accent)"></span>
+    <button class="btn secondary close" onclick="closePA()">Close</button>
+  </div>
+  <div class="pa-body">
+    <video id="pa-video" controls autoplay style="display:none"></video>
+    <img id="pa-image" alt="" style="display:none">
+  </div>
+  <div class="pa-info" id="pa-info"></div>
+</div>
+
+<div class="export-overlay" id="export-overlay">
+  <div class="export-card">
+    <h3 id="export-title">Export journey</h3>
+    <div id="export-form">
+      <div class="row">
+        <label>Preset</label>
+        <select id="export-preset">
+          <option value="youtube">YouTube — external .srt + description</option>
+          <option value="social">Social — burned subs + intro card</option>
+        </select>
+      </div>
+      <div class="row" id="export-burn-row">
+        <label>Subtitle lang</label>
+        <select id="export-burn">
+          <option value="">(none — external .srt only)</option>
+          <option value="en">English (burned)</option>
+          <option value="zh">繁體中文 (burned)</option>
+          <option value="ja">日本語 (burned)</option>
+        </select>
+      </div>
+      <div class="row">
+        <label>Intro card</label>
+        <select id="export-intro">
+          <option value="0">no</option>
+          <option value="1">yes — agent name + scope on black</option>
+        </select>
+      </div>
+      <div class="info" id="export-info">
+        Output goes to <code>exports/&lt;agent&gt;-&lt;journey&gt;/</code>. Re-encoding +
+        concat + (optional) subtitle burn-in runs in the background; this dialog
+        will show progress.
+      </div>
+    </div>
+    <div class="log" id="export-log"></div>
+    <div class="actions">
+      <button class="btn secondary" id="export-close">Close</button>
+      <button class="btn" id="export-start">Start export</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const fmt = (iso) => { try { return new Date(iso).toLocaleString(undefined, { hour12:false }); } catch(e){ return iso; } };
+const short = (iso) => { try { return new Date(iso).toLocaleTimeString(undefined, { hour12:false, hour:'2-digit', minute:'2-digit' }); } catch(e){ return ''; } };
+const esc = (s='') => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rel = (p) => p ? '../' + p : '';
+const fmtDur = (s) => s == null ? '' : (s >= 60 ? `${Math.floor(s/60)}m${Math.round(s%60)}s` : `${s.toFixed(1)}s`);
+
+let LAST_SIG = '';
+let FILTER_TAGS = new Set();
+let DATA = [];          // all session entries (all agents)
+let VIEW = [];          // filtered to SELECTED_AGENT
+let REPLACED_IDS = new Set();  // ids that are replaced by a later entry
+let AGENTS = { agents: [] };
+let SELECTED_AGENT = null;  // agent id currently shown
+let LANG = localStorage.getItem('otherwake.lang') || 'en';  // en | zh | ja
+
+// Pick a localized field from an object, with English fallback.
+// fieldFor(entry, 'thought') — returns thought_{lang} if lang != 'en' and present, else thought.
+function fieldFor(obj, base) {
+  if (!obj) return null;
+  if (LANG === 'en') return obj[base];
+  const key = base + '_' + LANG;
+  return obj[key] || obj[base];  // fallback to English
+}
+function hasLangField(obj, base) {
+  if (LANG === 'en') return !!obj[base];
+  return !!obj[base + '_' + LANG];
+}
+
+// ---- journey helpers ----
+function activeJourney(agent) {
+  if (!agent) return null;
+  return (agent.journeys || []).find(j => !j.rested_at) || null;
+}
+function isAwake(agent) { return !!activeJourney(agent); }
+function activeAgentId() {
+  for (const a of (AGENTS.agents || [])) if (isAwake(a)) return a.id;
+  return null;
+}
+
+// Group VIEW by journey, preserving the order of agent.journeys.
+// Returns [{ journey: {...}, entries: [...] }].
+function journeySectionsFor(agent) {
+  if (!agent) return [];
+  const viewByJourney = new Map();
+  for (const s of VIEW) {
+    const j = s.journey || '_orphan';
+    if (!viewByJourney.has(j)) viewByJourney.set(j, []);
+    viewByJourney.get(j).push(s);
+  }
+  const journeys = agent.journeys || [];
+  const sections = journeys.map(j => ({
+    journey: j,
+    entries: viewByJourney.get(j.id) || [],
+  }));
+  // orphan journey ids (in session.json but not in agent.journeys[]) — shouldn't happen, but surface them if they do
+  for (const [jid, ents] of viewByJourney) {
+    if (jid === '_orphan' || journeys.some(j => j.id === jid)) continue;
+    sections.push({
+      journey: { id: jid, started_at: ents[0] && ents[0].timestamp, rested_at: null, _orphan: true },
+      entries: ents,
+    });
+  }
+  const unassigned = viewByJourney.get('_orphan') || [];
+  if (unassigned.length) {
+    sections.push({ journey: { id: '(no journey)', _unassigned: true }, entries: unassigned });
+  }
+  return sections;
+}
+
+function thumb(s) {
+  // thumbnail for nav strip: prefer last-frame (image for t2i, ..._last for t2v/i2v)
+  if (s.kind === 't2i') return rel(s.image);
+  const lastFrame = (s.video || '').replace(/^video\//, 'image/').replace(/\.mp4$/, '_last.png');
+  return rel(lastFrame);
+}
+
+function renderSegment(s) {
+  const kind = s.kind || 'seg';
+  const failed = s.status === 'failed';
+  const replaced = REPLACED_IDS.has(s.id);
+  const classes = ['segment'];
+  if (failed) classes.push('failed');
+  if (replaced) classes.push('replaced-by');
+
+  const isVideo = !!s.video;
+  const isImage = !isVideo && !!s.image;
+  const sourceBadge = s.source
+    ? `<div class="source-badge"><img src="${rel(s.source)}" alt=""><span>from ${esc(s.source.split('/').pop())}</span></div>` : '';
+  const media = isVideo
+    ? `<video src="${rel(s.video)}" controls preload="metadata" playsinline ${s.poster?`poster="${rel(s.poster)}"`:''}></video>${sourceBadge}`
+    : isImage
+      ? `<img src="${rel(s.image)}" alt="">${sourceBadge}`
+      : `<div style="color:#555;padding:40px">no media</div>`;
+
+  const tags = (s.tags || []).map(t => `<span class="tag${FILTER_TAGS.has(t)?' active':''}" data-tag="${esc(t)}">${esc(t)}</span>`).join('');
+  const kvParts = [];
+  if (s.duration_s != null) kvParts.push(`<span>⏱<b>${fmtDur(s.duration_s)}</b></span>`);
+  if (s.seed != null) kvParts.push(`<span>seed<b>${s.seed}</b></span>`);
+  if (s.workflow) kvParts.push(`<span>wf<b>${esc(s.workflow)}</b></span>`);
+
+  const replacedBanner = replaced
+    ? `<div class="replaced-banner">⊘ This attempt was abandoned. Replaced by <a href="#seg-${esc(replacedBy(s.id))}">${esc(replacedBy(s.id))}</a>.</div>` : '';
+  const replacesNotice = s.replaces
+    ? `<div class="note-block"><strong>↳ Replaces</strong> <a href="#seg-${esc(s.replaces)}">${esc(s.replaces)}</a> (a failed attempt — see that entry for what went wrong).</div>` : '';
+
+  return `
+    <div class="${classes.join(' ')}" id="seg-${esc(s.id)}">
+      ${replacedBanner}
+      <div class="seg-head">
+        <span class="badge ${failed?'fail':kind}">${failed?'failed':kind}</span>
+        <span class="seg-id">${esc(s.id||'')}</span>
+        ${tags}
+        <span class="seg-time">${fmt(s.timestamp||'')}</span>
+      </div>
+      <div class="seg-body">
+        <div class="seg-media">${media}</div>
+        <div class="seg-text">
+          ${s.thought ? (() => {
+            const t = fieldFor(s, 'thought');
+            const missing = LANG !== 'en' && !s['thought_' + LANG];
+            const editBtn = `<button class="edit-pencil" data-edit-thought="${esc(s.id)}" title="edit thought text">✎</button>`;
+            return `<div><div class="label">my thought${missing ? '<span class="missing-lang">EN · translation pending</span>' : ''}${editBtn}</div><div class="thought-block">${esc(t)}</div></div>`;
+          })() : ''}
+          ${s.prompt ? `<div class="prompt-wrap"><details ${s.prompt.length<160?'open':''}><summary><span class="label" style="display:inline">prompt · ${s.prompt.length} chars</span></summary><div class="prompt">${esc(s.prompt)}</div></details></div>`:''}
+          ${failed ? `<div><div class="label">failure reason</div><div class="failure-block">${esc(s.failure_reason||'(unspecified)')}</div></div>`:''}
+          ${replacesNotice}
+          ${s.note ? `<div><div class="label">note</div><div class="note-block">${esc(s.note)}</div></div>`:''}
+          ${kvParts.length?`<div class="kv">${kvParts.join('')}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderJourneySection(sec) {
+  const j = sec.journey || {};
+  const jid = j.id || '';
+  const awake = !j.rested_at && !j._unassigned;
+  const metaBits = [];
+  if (j.started_at) metaBits.push(`started ${fmt(j.started_at)}`);
+  if (j.rested_at) metaBits.push(`rested ${fmt(j.rested_at)}`);
+  metaBits.push(`${sec.entries.length} segments`);
+  // model + scope are rendered as their own badges below — kept out of jmeta line.
+  const fam = (m='') => {
+    const s = String(m).toLowerCase();
+    if (s.startsWith('claude'))     return 'claude';
+    if (s.startsWith('qwen'))       return 'qwen';
+    if (s.startsWith('llama'))      return 'llama';
+    if (s.startsWith('gemma'))      return 'gemma';
+    if (s.startsWith('minicpm'))    return 'minicpm';
+    if (s.startsWith('gpt'))        return 'gpt';
+    if (s.startsWith('gemini'))     return 'gemini';
+    return 'other';
+  };
+  const modelBadge = j.model
+    ? `<span class="model-badge fam-${fam(j.model)}" title="model that drove this journey">${esc(j.model)}</span>` : '';
+  const scopeBadge = j.scope ? `<span class="scope-badge">${esc(j.scope)}</span>` : '';
+  const statusTxt = j._unassigned ? 'unassigned' : (awake ? 'wandering' : 'at rest');
+  const statusCls = awake ? 'jstatus live' : 'jstatus';
+  const summary = !awake && !j._unassigned ? fieldFor(j, 'summary') : null;
+  const editSummaryBtn = (!awake && !j._unassigned)
+    ? `<button class="edit-pencil" data-edit-summary="${esc(SELECTED_AGENT)}|${esc(jid)}" title="edit summary text">✎ summary</button>`
+    : '';
+  const exportBtn = (!j._unassigned && sec.entries.length)
+    ? `<button class="export-btn" data-export="${esc(SELECTED_AGENT)}|${esc(jid)}" title="export this journey as a single mp4">🎬 Export</button>`
+    : '';
+  const head = `<div class="journey-section-head">
+      <span class="jid">${esc(jid)}</span>
+      ${modelBadge}
+      ${scopeBadge}
+      <span class="jmeta">${metaBits.join(' · ')}</span>
+      <span class="${statusCls}">${esc(statusTxt)}</span>
+      ${editSummaryBtn}
+      ${exportBtn}
+      ${summary ? `<div class="jsummary">${esc(summary)}</div>` : ''}
+    </div>`;
+  const body = sec.entries.length
+    ? sec.entries.map(renderSegment).join('')
+    : `<div class="empty" style="padding:40px 20px">No segments in this journey.</div>`;
+  return `<div class="journey-section">${head}${body}</div>`;
+}
+
+function replacedBy(id) {
+  const next = DATA.find(x => x.replaces === id);
+  return next ? next.id : '';
+}
+
+function computeReplaced() {
+  REPLACED_IDS = new Set();
+  for (const e of DATA) if (e.replaces) REPLACED_IDS.add(e.replaces);
+}
+
+function renderStats() {
+  const total = VIEW.length;
+  const ok = VIEW.filter(e => e.status !== 'failed').length;
+  const failed = VIEW.filter(e => e.status === 'failed').length;
+  const totalGen = VIEW.reduce((a, e) => a + (e.duration_s || 0), 0);
+  const videoSec = VIEW.filter(e => e.video).length * 5;
+  const styles = new Set();
+  VIEW.forEach(e => (e.tags||[]).forEach(t => {
+    if (['photoreal','ink-wash','oil-painting','semi-stylized','anime','watercolor'].includes(t)) styles.add(t);
+  }));
+  document.getElementById('stats').innerHTML =
+    `<span><b>${total}</b> segments</span>`
+    + (failed?`<span style="color:var(--fail)"><b>${failed}</b> failed</span>`:'')
+    + `<span>~<b>${Math.round(videoSec)}s</b> footage</span>`
+    + `<span><b>${fmtDur(totalGen)}</b> compute</span>`
+    + (styles.size?`<span>styles:<b> ${[...styles].join(', ')}</b></span>`:'');
+}
+
+function agentOf(s) { return s.agent || '_unassigned'; }
+
+function computeView() {
+  VIEW = SELECTED_AGENT ? DATA.filter(s => agentOf(s) === SELECTED_AGENT) : DATA.slice();
+}
+
+function agentInfo(id) {
+  return AGENTS.agents.find(a => a.id === id) || null;
+}
+
+function renderAgents() {
+  const ids = [];
+  const counts = {};
+  const lastSeen = {};
+  for (const s of DATA) {
+    const a = agentOf(s);
+    if (!(a in counts)) { counts[a] = 0; ids.push(a); }
+    counts[a]++;
+    const t = s.timestamp || '';
+    if (t && (!lastSeen[a] || t > lastSeen[a])) lastSeen[a] = t;
+  }
+  // group: wandering (currently active) first, then rested, each group sorted
+  // by most recent segment timestamp (newest → oldest).
+  const registered = new Set(AGENTS.agents.map(a => a.id));
+  const all = [...new Set([...AGENTS.agents.map(a => a.id), ...ids])].filter(x => x in counts);
+  const recencyDesc = (a, b) => (lastSeen[b] || '').localeCompare(lastSeen[a] || '');
+  const wandering = all.filter(id => { const info = agentInfo(id); return info && isAwake(info); }).sort(recencyDesc);
+  const rested = all.filter(id => !wandering.includes(id)).sort(recencyDesc);
+
+  const el = document.getElementById('agents');
+  if (!wandering.length && !rested.length) { el.innerHTML = ''; return; }
+
+  const renderTab = (id) => {
+    const info = agentInfo(id);
+    const awake = info ? isAwake(info) : false;
+    const labelFull = info ? (info.display || info.name || id) : id;
+    // "字 · english" → char="字", reading="english". Plain ascii names stay whole.
+    const sepIdx = labelFull.indexOf(' · ');
+    const labelChar = sepIdx > 0 ? labelFull.slice(0, sepIdx) : labelFull;
+    const labelReading = sepIdx > 0 ? labelFull.slice(sepIdx) : '';  // includes the " · " prefix
+    const cls = ['agent-tab'];
+    if (id === SELECTED_AGENT) cls.push('active');
+    if (awake) cls.push('live');
+    else if (info) cls.push('rested');
+    const editControls = `<span class="edit-controls" data-stop="1">
+      <button data-edit="up" title="move up">↑</button>
+      <button data-edit="down" title="move down">↓</button>
+      <button data-edit="rename" title="rename display">✎</button>
+      <button data-edit="delete" class="danger" title="delete agent + all segments + media">×</button>
+    </span>`;
+    return `<div class="${cls.join(' ')}" data-agent="${esc(id)}" data-label="${esc((labelFull || '').toLowerCase())}">
+      <span class="adot"></span>
+      <span>${esc(labelChar)}${labelReading ? `<span class="alabel-reading">${esc(labelReading)}</span>` : ''}</span>
+      <span class="acount">${counts[id]}</span>
+      ${editControls}
+    </div>`;
+  };
+
+  const parts = [];
+  parts.push(...wandering.map(renderTab));
+  if (wandering.length && rested.length) parts.push('<div class="agent-group-sep" aria-hidden="true"></div>');
+  parts.push(...rested.map(renderTab));
+  el.innerHTML = parts.join('');
+
+  applyAgentFilter();
+  const active = el.querySelector('.agent-tab.active');
+  if (active) active.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  if (typeof updatePagerState === 'function') updatePagerState();
+}
+
+function applyAgentFilter() {
+  const input = document.getElementById('agents-filter');
+  if (!input) return;
+  const q = (input.value || '').trim().toLowerCase();
+  const tabs = document.querySelectorAll('#agents .agent-tab');
+  tabs.forEach(t => {
+    const id = t.dataset.agent || '';
+    const label = t.dataset.label || '';
+    const hit = !q || id.includes(q) || label.includes(q);
+    t.classList.toggle('hidden', !hit);
+  });
+}
+
+function renderAgentBanner() {
+  const info = agentInfo(SELECTED_AGENT);
+  if (!info) return '';
+  const journeys = info.journeys || [];
+  const awake = isAwake(info);
+  const metaBits = [];
+  if (info.born_at) metaBits.push(`born ${fmt(info.born_at)}`);
+  metaBits.push(`${journeys.length} ${journeys.length === 1 ? 'journey' : 'journeys'}`);
+  metaBits.push(`${VIEW.length} segments`);
+  metaBits.push(awake ? 'wandering' : 'at rest');
+  return `<div class="agent-banner">
+    <div class="aname">${esc(info.display || info.name || info.id)}</div>
+    <div class="ameta">${metaBits.join(' · ')}</div>
+  </div>`;
+}
+
+function renderNav() {
+  const nav = document.getElementById('nav');
+  const info = agentInfo(SELECTED_AGENT);
+  const sections = info ? journeySectionsFor(info) : [{ journey: null, entries: VIEW }];
+  const renderThumb = (s) => {
+    const t = thumb(s);
+    const cls = s.status === 'failed' ? ' class="failed"' : '';
+    return `<a href="#seg-${esc(s.id)}"${cls} title="${esc(s.id)}${s.status==='failed'?' (failed)':''}">${t?`<img src="${t}" alt="">`:''}<span class="lbl">${esc(s.id.split('_')[0])}</span></a>`;
+  };
+  const parts = [];
+  sections.forEach((sec, i) => {
+    if (!sec.entries.length) return;
+    const jid = sec.journey && sec.journey.id ? sec.journey.id : '';
+    const sepCls = 'nav-journey-sep' + (i === 0 ? ' first' : '');
+    if (jid) parts.push(`<div class="${sepCls}">${esc(jid)}</div>`);
+    parts.push(sec.entries.map(renderThumb).join(''));
+  });
+  nav.innerHTML = parts.join('');
+  if (typeof updateNavPager === 'function') updateNavPager();
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('#root .segment');
+  cards.forEach((el, i) => {
+    const s = VIEW[i];
+    if (!s) return;
+    const match = FILTER_TAGS.size === 0 || (s.tags||[]).some(t => FILTER_TAGS.has(t));
+    el.style.display = match ? '' : 'none';
+  });
+}
+
+async function pollStatus() {
+  try {
+    const r = await fetch('../logs/status.json?ts=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    const s = await r.json();
+    const el = document.getElementById('status');
+    const txt = document.getElementById('status-text');
+    const isLive = s.state && s.state !== 'idle';
+    el.classList.toggle('live', isLive);
+    el.classList.toggle('idle', !isLive);
+    const age = (Date.now() - new Date(s.updated_at).getTime()) / 1000;
+    if (isLive && s.seg_id) {
+      txt.textContent = `${s.state} ${s.seg_id}${age<60?'':` (stale ${Math.round(age)}s)`}`;
+    } else {
+      txt.textContent = isLive ? s.state : 'idle';
+    }
+
+    // Update the Run panel state line if it's open.
+    const runState = document.getElementById('run-state');
+    if (runState) {
+      runState.classList.toggle('live', isLive);
+      const wakeBtn = document.getElementById('run-wake');
+      const restBtn = document.getElementById('run-rest');
+      const stopBtn = document.getElementById('run-stop');
+      // Rest stays available even when the daemon is idle, as long as
+      // some agent has an active (un-rested) journey on disk — that
+      // covers the "Stop left it paused, now I want to close it"
+      // path. Stop only makes sense while the daemon is alive.
+      const orphanActive = !isLive && AGENTS && AGENTS.agents &&
+        AGENTS.agents.some(a => (a.journeys || []).some(j => !j.rested_at));
+      if (wakeBtn) wakeBtn.disabled = isLive;
+      if (restBtn) restBtn.disabled = !isLive && !orphanActive;
+      if (stopBtn) stopBtn.disabled = !isLive;
+      if (isLive) {
+        const parts = [];
+        parts.push(`<b>${esc(s.state || '?')}</b>`);
+        if (s.phase) parts.push(esc(s.phase));
+        if (s.agent) parts.push(`agent <b>${esc(s.agent)}</b>`);
+        if (s.journey) parts.push(`journey <b>${esc(s.journey)}</b>`);
+        if (s.seg_id) parts.push(`seg <b>${esc(s.seg_id)}</b>`);
+        if (s.segments_done != null) parts.push(`<b>${s.segments_done}</b> done`);
+        if (s.provider && s.model) parts.push(`<b>${esc(s.provider)}:${esc(s.model)}</b>`);
+        if (s.scope) parts.push(`scope: <b>${esc(s.scope)}</b>`);
+        runState.innerHTML = parts.join(' · ');
+      } else if (orphanActive) {
+        const a = AGENTS.agents.find(a => (a.journeys || []).some(j => !j.rested_at));
+        const j = (a.journeys || []).find(j => !j.rested_at);
+        runState.innerHTML = `idle &middot; <b>${esc(a.id)}</b>/${esc(j.id)} is paused (rested_at:null) &mdash; click Rest to close it out.`;
+      } else {
+        let txt2 = 'idle';
+        if (s.last_error) txt2 += ` <span class="err">(last error: ${esc(s.last_error)})</span>`;
+        runState.innerHTML = txt2;
+      }
+    }
+  } catch(e) {
+    document.getElementById('status-text').textContent = 'idle';
+  }
+}
+
+async function loadAgents() {
+  try {
+    const r = await fetch('../logs/agents.json?ts=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) AGENTS = await r.json();
+  } catch(e) { /* ok, agents.json is optional */ }
+}
+
+function pickDefaultAgent() {
+  if (SELECTED_AGENT && DATA.some(s => agentOf(s) === SELECTED_AGENT)) return;
+  const awake = activeAgentId();
+  if (awake && DATA.some(s => agentOf(s) === awake)) {
+    SELECTED_AGENT = awake;
+    return;
+  }
+  // else: the most recent agent by latest timestamp among DATA
+  let best = null, bestT = '';
+  for (const s of DATA) {
+    if ((s.timestamp||'') > bestT) { bestT = s.timestamp; best = agentOf(s); }
+  }
+  SELECTED_AGENT = best;
+}
+
+async function load() {
+  try {
+    await loadAgents();
+    const r = await fetch('../logs/session.json?ts=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('session.json not found');
+    DATA = await r.json();
+    computeReplaced();
+    pickDefaultAgent();
+    computeView();
+    const sig = SELECTED_AGENT + '#' + VIEW.map(s => s.id + '|' + (s.timestamp||'') + '|' + (s.status||'')).join(',');
+    if (sig !== LAST_SIG) {
+      LAST_SIG = sig;
+      const root = document.getElementById('root');
+      const info = agentInfo(SELECTED_AGENT);
+      if (!VIEW.length) {
+        root.innerHTML = renderAgentBanner() + '<div class="empty">No segments yet for this agent.</div>';
+      } else if (info) {
+        const sections = journeySectionsFor(info);
+        root.innerHTML = renderAgentBanner() + sections.map(renderJourneySection).join('');
+      } else {
+        root.innerHTML = renderAgentBanner() + VIEW.map(renderSegment).join('');
+      }
+      renderAgents();
+      renderNav();
+      renderStats();
+      applyFilter();
+    }
+  } catch(e) {
+    document.getElementById('root').innerHTML =
+      `<div class="empty">Cannot read <code>logs/session.json</code><br><small>${esc(e.message)}</small></div>`;
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const tagEl = e.target.closest('.tag');
+  if (tagEl) {
+    e.preventDefault();
+    const t = tagEl.dataset.tag;
+    if (FILTER_TAGS.has(t)) FILTER_TAGS.delete(t); else FILTER_TAGS.add(t);
+    document.querySelectorAll(`.tag[data-tag="${t}"]`).forEach(el => el.classList.toggle('active'));
+    applyFilter();
+    return;
+  }
+  const agentEl = e.target.closest('.agent-tab');
+  if (agentEl) {
+    const a = agentEl.dataset.agent;
+    if (a !== SELECTED_AGENT) {
+      SELECTED_AGENT = a;
+      FILTER_TAGS = new Set();
+      LAST_SIG = '';  // force re-render
+      load();
+    }
+  }
+});
+
+// ---- Play All ----
+// Plays both videos and t2i images. Videos advance on `ended`; images
+// advance on a 5s timer. Manual nav (arrows) cancels any pending image
+// timer so we don't double-step.
+const PA_IMG_DURATION_MS = 5000;
+let PA_IDX = 0;
+let PA_LIST = [];
+let PA_IMG_TIMER = null;
+function clearImgTimer() {
+  if (PA_IMG_TIMER) { clearTimeout(PA_IMG_TIMER); PA_IMG_TIMER = null; }
+}
+function openPA() {
+  PA_LIST = VIEW.filter(s =>
+    (s.video || s.image) && s.status !== 'failed' && !REPLACED_IDS.has(s.id)
+  );
+  if (!PA_LIST.length) return alert('No playable segments yet.');
+  PA_IDX = 0;
+  document.getElementById('pa-overlay').classList.add('open');
+  playCurrent();
+}
+function closePA() {
+  document.getElementById('pa-overlay').classList.remove('open');
+  document.getElementById('pa-video').pause();
+  clearImgTimer();
+}
+function playCurrent() {
+  clearImgTimer();
+  const s = PA_LIST[PA_IDX];
+  if (!s) { closePA(); return; }
+  const v = document.getElementById('pa-video');
+  const img = document.getElementById('pa-image');
+  document.getElementById('pa-counter').textContent = `${PA_IDX+1} / ${PA_LIST.length}`;
+  document.getElementById('pa-id').textContent = s.id;
+  document.getElementById('pa-info').innerHTML =
+    (s.thought ? `<b>thought:</b> ${esc(s.thought)}<br><br>` : '') +
+    (s.prompt ? `<b>prompt:</b> ${esc(s.prompt)}` : '');
+  if (s.video) {
+    img.style.display = 'none';
+    img.removeAttribute('src');
+    v.style.display = '';
+    v.src = rel(s.video);
+    v.play().catch(()=>{});
+  } else {
+    // t2i (or any video-less segment): show image for PA_IMG_DURATION_MS, then advance.
+    v.pause();
+    v.removeAttribute('src');
+    v.style.display = 'none';
+    img.style.display = '';
+    img.src = rel(s.image);
+    PA_IMG_TIMER = setTimeout(() => {
+      PA_IMG_TIMER = null;
+      PA_IDX++;
+      if (PA_IDX >= PA_LIST.length) closePA(); else playCurrent();
+    }, PA_IMG_DURATION_MS);
+  }
+}
+// Generic horizontal-strip pager: prev/next buttons that scroll one viewport
+// width at a time, plus state sync (greys out buttons at the ends).
+function setupPager(stripId, prevId, nextId) {
+  const el = document.getElementById(stripId);
+  const prev = document.getElementById(prevId);
+  const next = document.getElementById(nextId);
+  if (!el || !prev || !next) return () => {};
+  const update = () => {
+    const max = el.scrollWidth - el.clientWidth;
+    prev.disabled = el.scrollLeft <= 1;
+    next.disabled = max <= 1 || el.scrollLeft >= max - 1;
+  };
+  prev.addEventListener('click', () => el.scrollBy({ left: -el.clientWidth + 40, behavior: 'smooth' }));
+  next.addEventListener('click', () => el.scrollBy({ left:  el.clientWidth - 40, behavior: 'smooth' }));
+  el.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  return update;
+}
+
+// Click-and-drag horizontal scroll. Suppresses the synthetic click on whatever
+// element was under the cursor when a real drag (>5px) happened, so dragging
+// past a tab/segment thumb doesn't accidentally select it.
+function enableDragScroll(el) {
+  if (!el) return;
+  let down = false, startX = 0, startScroll = 0, moved = 0;
+  el.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button')) return;  // don't hijack edit-control / pager-btn clicks
+    down = true; moved = 0;
+    startX = e.clientX;
+    startScroll = el.scrollLeft;
+    el.classList.add('dragging');
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > moved) moved = Math.abs(dx);
+    el.scrollLeft = startScroll - dx;
+  });
+  document.addEventListener('mouseup', () => {
+    if (!down) return;
+    down = false;
+    el.classList.remove('dragging');
+    if (moved > 5) {
+      const block = (ev) => { ev.preventDefault(); ev.stopPropagation(); el.removeEventListener('click', block, true); };
+      el.addEventListener('click', block, true);
+    }
+  });
+  document.addEventListener('mouseleave', () => {
+    if (down) { down = false; el.classList.remove('dragging'); }
+  });
+}
+
+const updatePagerState   = setupPager('agents', 'pager-prev', 'pager-next');  // alias kept for renderAgents callers
+const updateNavPager     = setupPager('nav',    'nav-prev',   'nav-next');
+enableDragScroll(document.getElementById('agents'));
+enableDragScroll(document.getElementById('nav'));
+
+// ---- Run panel ----
+let RUN_OPEN = localStorage.getItem('otherwake.run.open') === '1';
+function applyRunOpen() {
+  document.body.classList.toggle('run-open', RUN_OPEN);
+  document.getElementById('run-toggle').classList.toggle('on', RUN_OPEN);
+  if (RUN_OPEN) refreshRunProviders();
+}
+document.getElementById('run-toggle').addEventListener('click', () => {
+  RUN_OPEN = !RUN_OPEN;
+  localStorage.setItem('otherwake.run.open', RUN_OPEN ? '1' : '0');
+  applyRunOpen();
+});
+
+// Cache of /api/run/providers so dropdown changes don't refetch.
+let RUN_PROVIDERS = [];
+
+async function refreshRunProviders() {
+  try {
+    const r = await fetch('/api/run/providers');
+    const data = await r.json();
+    if (!data.ok) return;
+    RUN_PROVIDERS = data.providers || [];
+  } catch (e) {
+    RUN_PROVIDERS = [];
+  }
+  applyMode();  // populate provider + model dropdowns based on saved mode
+}
+
+function applyMode() {
+  const mode = document.getElementById('run-mode').value;
+  // Filter providers by mode: offline = no key required, online = key required.
+  const visible = RUN_PROVIDERS.filter(p =>
+    (mode === 'online') ? p.requires_api_key : !p.requires_api_key
+  );
+  // Show/hide GPU group (Ollama-only knob).
+  document.getElementById('run-gpu-wrap').style.display = (mode === 'offline') ? '' : 'none';
+
+  const provSel = document.getElementById('run-provider');
+  const savedProvider = localStorage.getItem('otherwake.run.provider.' + mode) || (visible[0] && visible[0].name) || '';
+  if (visible.length === 0) {
+    provSel.innerHTML = `<option value="">(no providers in ${esc(mode)} mode)</option>`;
+  } else {
+    provSel.innerHTML = visible.map(p =>
+      `<option value="${esc(p.name)}"${p.name===savedProvider?' selected':''}>${esc(p.name)}${p.requires_api_key && !p.available ? ' (no key)' : ''}</option>`
+    ).join('');
+  }
+  applyProvider();
+}
+
+function applyProvider() {
+  const provName = document.getElementById('run-provider').value;
+  const p = RUN_PROVIDERS.find(x => x.name === provName);
+  const modelSel = document.getElementById('run-model');
+  const savedModel = localStorage.getItem('otherwake.run.model.' + provName) || '';
+  if (!p || !p.models || !p.models.length) {
+    modelSel.innerHTML = `<option value="">(no models — pull or configure first)</option>`;
+  } else {
+    modelSel.innerHTML = p.models.map(m =>
+      `<option value="${esc(m.id)}"${m.id===savedModel?' selected':''}>${esc(m.label||m.id)}</option>`
+    ).join('');
+  }
+  // Show/hide the "Set key" button for online providers.
+  const needsKey = !!(p && p.requires_api_key);
+  document.getElementById('run-key-btn').style.display = needsKey ? '' : 'none';
+  applyTranslateModelDropdown();
+}
+
+// Populate the "via" translate-model dropdown across ALL available providers
+// (offline + online), since you might drive offline but translate online or
+// vice versa. Hidden unless at least one zh/ja checkbox is on.
+function applyTranslateModelDropdown() {
+  const wrap = document.getElementById('run-trmodel');
+  const label = document.getElementById('run-trmodel-label');
+  const anyTrLang = document.getElementById('run-tr-zh').checked
+                 || document.getElementById('run-tr-ja').checked;
+  if (!anyTrLang) {
+    wrap.style.display = 'none';
+    label.style.display = 'none';
+    return;
+  }
+  const saved = localStorage.getItem('otherwake.run.trmodel') || '';
+  const opts = [`<option value="">same as trip model</option>`];
+  for (const p of (RUN_PROVIDERS || [])) {
+    if (!p.models || !p.models.length) continue;
+    for (const m of p.models) {
+      // For online providers we still need the user's API key to be set; the
+      // request will fail at translate time if not, with a clear error. We
+      // don't filter here — better to let the user see the choice.
+      const id = m.id;
+      const label = `${m.label || m.id}${p.requires_api_key ? ' · ' + p.name : ''}`;
+      opts.push(`<option value="${esc(id)}"${id===saved?' selected':''}>${esc(label)}</option>`);
+    }
+  }
+  wrap.innerHTML = opts.join('');
+  wrap.style.display = '';
+  label.style.display = '';
+}
+
+document.getElementById('run-mode').addEventListener('change', (e) => {
+  localStorage.setItem('otherwake.run.mode', e.target.value);
+  applyMode();
+});
+document.getElementById('run-provider').addEventListener('change', (e) => {
+  const mode = document.getElementById('run-mode').value;
+  localStorage.setItem('otherwake.run.provider.' + mode, e.target.value);
+  applyProvider();
+});
+// Translate checkboxes — toggle visibility of the "via" dropdown.
+document.getElementById('run-tr-zh').addEventListener('change', applyTranslateModelDropdown);
+document.getElementById('run-tr-ja').addEventListener('change', applyTranslateModelDropdown);
+document.getElementById('run-trmodel').addEventListener('change', (e) => {
+  localStorage.setItem('otherwake.run.trmodel', e.target.value);
+});
+
+// Restore saved mode (offline default for new users).
+const _savedMode = localStorage.getItem('otherwake.run.mode');
+if (_savedMode === 'offline' || _savedMode === 'online') {
+  document.getElementById('run-mode').value = _savedMode;
+}
+
+// "Set key" button: prompt for the selected provider's API key, POST to save.
+document.getElementById('run-key-btn').addEventListener('click', async () => {
+  const provName = document.getElementById('run-provider').value;
+  const cur = prompt(`API key for ${provName}\n\n` +
+    `Stored in config.json (gitignored). Leave blank to clear.`);
+  if (cur === null) return;  // cancelled
+  const r = await fetch('/api/run/save-key', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({provider: provName, api_key: cur}),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (data.ok) {
+    alert(`Key for ${provName} ${data.set ? 'saved' : 'cleared'}.`);
+    refreshRunProviders();  // reflect the new "available" state
+  } else {
+    alert(`Failed to save key: ${data.error || 'unknown'}`);
+  }
+});
+
+// Restore selections from localStorage
+const _savedScope = localStorage.getItem('otherwake.run.scope');
+if (_savedScope) document.getElementById('run-scope').value = _savedScope;
+const _savedNumGpu = localStorage.getItem('otherwake.run.numGpu');
+if (_savedNumGpu) document.getElementById('run-numgpu').value = _savedNumGpu;
+document.getElementById('run-tr-zh').checked = localStorage.getItem('otherwake.run.tr.zh') === '1';
+document.getElementById('run-tr-ja').checked = localStorage.getItem('otherwake.run.tr.ja') === '1';
+
+document.getElementById('run-scope').addEventListener('input', (e) => {
+  localStorage.setItem('otherwake.run.scope', e.target.value);
+});
+document.getElementById('run-numgpu').addEventListener('change', (e) => {
+  localStorage.setItem('otherwake.run.numGpu', e.target.value);
+});
+document.getElementById('run-model').addEventListener('change', (e) => {
+  const provName = document.getElementById('run-provider').value;
+  localStorage.setItem('otherwake.run.model.' + provName, e.target.value);
+});
+document.getElementById('run-tr-zh').addEventListener('change', (e) => {
+  localStorage.setItem('otherwake.run.tr.zh', e.target.checked ? '1' : '0');
+});
+document.getElementById('run-tr-ja').addEventListener('change', (e) => {
+  localStorage.setItem('otherwake.run.tr.ja', e.target.checked ? '1' : '0');
+});
+
+async function runPost(route, body) {
+  try {
+    const r = await fetch(route, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body || {}),
+    });
+    const data = await r.json().catch(() => ({ok:false, error:'invalid response'}));
+    if (!data.ok) {
+      const stateEl = document.getElementById('run-state');
+      stateEl.classList.remove('live');
+      stateEl.innerHTML = `<span class="err">${esc(data.error || 'error')}${data.hint ? ' — ' + esc(data.hint) : ''}</span>`;
+      return null;
+    }
+    return data;
+  } catch (e) {
+    alert(`${route} network error: ${e.message}`);
+    return null;
+  }
+}
+
+// Handle the wake-conflict + needs-key responses specifically.
+async function wakeWithConflictHandler(body) {
+  const r = await fetch('/api/run/wake', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+  });
+  const data = await r.json().catch(() => ({ok:false, error:'invalid response'}));
+  if (data.ok) return data;
+
+  // Server tells us this provider needs an API key — prompt for one, save, retry.
+  if (data.needs_key) {
+    const key = prompt(
+      `${data.needs_key} requires an API key.\n\n` +
+      `Paste it now (it'll be saved to config.json — gitignored — for future runs).\n` +
+      `Or click Cancel and set it later via the 🔑 Set key button.`
+    );
+    if (!key) return null;
+    const sk = await fetch('/api/run/save-key', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({provider: data.needs_key, api_key: key}),
+    });
+    const sk_data = await sk.json().catch(() => ({}));
+    if (!sk_data.ok) {
+      alert(`Failed to save key: ${sk_data.error || 'unknown'}`);
+      return null;
+    }
+    refreshRunProviders();
+    // Retry wake with the same body.
+    const r2 = await fetch('/api/run/wake', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    });
+    const data2 = await r2.json().catch(() => ({ok:false, error:'invalid response'}));
+    if (data2.ok) return data2;
+    alert(`Wake failed even after saving key: ${data2.error || 'unknown'}`);
+    return null;
+  }
+
+  const conflict = data.error && /mid-journey|already busy/i.test(data.error);
+  if (conflict && data.active_agent) {
+    const msg = `An existing journey is still marked active:\n\n` +
+                `  agent:   ${data.active_agent}\n` +
+                `  journey: ${data.active_journey || '?'}\n\n` +
+                `OK   = continue that journey with the model/scope you just picked.\n` +
+                `Cancel = abandon this attempt. To start fresh, rest the existing journey\n` +
+                `         (Edit mode → ✎ on the agent's summary) or use the CLI:\n` +
+                `         python driver/ollama_agent.py --rest\n` +
+                `         then click Wake again.`;
+    if (confirm(msg)) {
+      const r2 = await fetch('/api/run/wake', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ ...body, force: true }),
+      });
+      const data2 = await r2.json().catch(() => ({ok:false, error:'invalid response'}));
+      if (data2.ok) return data2;
+      alert(`Force-resume failed: ${data2.error || 'unknown error'}`);
+      return null;
+    }
+    return null;
+  }
+  // Non-conflict error: surface in the run-state line and alert.
+  const stateEl = document.getElementById('run-state');
+  stateEl.classList.remove('live');
+  stateEl.innerHTML = `<span class="err">${esc(data.error || 'error')}</span>`;
+  alert(data.error + (data.hint ? '\n\n' + data.hint : ''));
+  return null;
+}
+
+document.getElementById('run-wake').addEventListener('click', async () => {
+  const provider = document.getElementById('run-provider').value;
+  const model = document.getElementById('run-model').value;
+  const scope = document.getElementById('run-scope').value.trim();
+  const num_gpu = parseInt(document.getElementById('run-numgpu').value, 10);
+  const translate_langs = [];
+  if (document.getElementById('run-tr-zh').checked) translate_langs.push('zh');
+  if (document.getElementById('run-tr-ja').checked) translate_langs.push('ja');
+  // Optional separate translator. Empty value or no langs → translation
+  // uses the trip model (existing behaviour).
+  const trModel = document.getElementById('run-trmodel').value;
+  let translate_model = null, translate_provider = null;
+  if (trModel && translate_langs.length) {
+    // Find the provider this model belongs to via the cached RUN_PROVIDERS list.
+    for (const p of (RUN_PROVIDERS || [])) {
+      if ((p.models || []).some(m => m.id === trModel)) {
+        translate_provider = p.name;
+        translate_model = trModel;
+        break;
+      }
+    }
+  }
+  if (!model) {
+    alert('Pick a model first. If the dropdown is empty, you may need to `ollama pull gemma3:12b`.');
+    return;
+  }
+  await wakeWithConflictHandler({
+    provider, model, scope, num_gpu, translate_langs,
+    translate_provider, translate_model,
+  });
+  pollStatus();
+});
+
+document.getElementById('run-rest').addEventListener('click', async () => {
+  if (!confirm('Rest now? The current segment will finish first, then translation runs.')) return;
+  await runPost('/api/run/rest', {});
+  pollStatus();
+});
+
+document.getElementById('run-stop').addEventListener('click', async () => {
+  if (!confirm('Stop now? The current segment will finish, then the journey is left active for later resume.')) return;
+  await runPost('/api/run/stop', {});
+  pollStatus();
+});
+
+applyRunOpen();
+
+// compact-agents toggle: hide " · english" reading on agent tabs (more fit per row)
+let COMPACT = localStorage.getItem('otherwake.compact') === '1';
+function applyCompact() {
+  document.body.classList.toggle('compact-agents', COMPACT);
+  document.getElementById('compact-toggle').classList.toggle('on', COMPACT);
+  updatePagerState();  // safe now: setupPager has run above
+}
+document.getElementById('compact-toggle').addEventListener('click', () => {
+  COMPACT = !COMPACT;
+  localStorage.setItem('otherwake.compact', COMPACT ? '1' : '0');
+  applyCompact();
+});
+applyCompact();
+
+document.getElementById('agents-filter').addEventListener('input', applyAgentFilter);
+document.getElementById('playall').addEventListener('click', openPA);
+document.getElementById('pa-video').addEventListener('ended', () => {
+  PA_IDX++;
+  if (PA_IDX >= PA_LIST.length) closePA(); else playCurrent();
+});
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('pa-overlay').classList.contains('open')) return;
+  if (e.key === 'Escape') closePA();
+  if (e.key === 'ArrowRight') { PA_IDX = Math.min(PA_IDX+1, PA_LIST.length-1); playCurrent(); }
+  if (e.key === 'ArrowLeft') { PA_IDX = Math.max(PA_IDX-1, 0); playCurrent(); }
+});
+
+// ---- language switch ----
+function setLang(lang) {
+  if (!['en', 'zh', 'ja'].includes(lang)) return;
+  LANG = lang;
+  localStorage.setItem('otherwake.lang', lang);
+  document.querySelectorAll('#lang-switch button').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  LAST_SIG = '';  // force re-render
+  load();
+}
+document.getElementById('lang-switch').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-lang]');
+  if (btn) setLang(btn.dataset.lang);
+});
+setLang(LANG);  // init active button
+
+// ---- edit mode ----
+let EDIT_MODE = localStorage.getItem('otherwake.edit') === '1';
+function applyEditMode() {
+  document.body.classList.toggle('edit-mode', EDIT_MODE);
+  const btn = document.getElementById('edit-toggle');
+  btn.classList.toggle('on', EDIT_MODE);
+  btn.textContent = EDIT_MODE ? '✓ Editing' : '✎ Edit';
+}
+document.getElementById('edit-toggle').addEventListener('click', () => {
+  EDIT_MODE = !EDIT_MODE;
+  localStorage.setItem('otherwake.edit', EDIT_MODE ? '1' : '0');
+  applyEditMode();
+});
+applyEditMode();
+
+async function apiPost(route, body) {
+  try {
+    const resp = await fetch(route, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json().catch(() => ({ ok: false, error: 'invalid response' }));
+    if (!data.ok) {
+      alert(`${route} failed: ${data.error || 'unknown error'}`);
+      return null;
+    }
+    return data;
+  } catch (e) {
+    alert(`${route} network error: ${e.message}`);
+    return null;
+  }
+}
+
+// ---- agent tab edit controls (delegated click) ----
+document.addEventListener('click', async (e) => {
+  // Stop the agent-tab click handler from firing when an edit-control button was hit.
+  if (e.target.closest('[data-stop]') && e.target.closest('button[data-edit]')) {
+    e.stopPropagation();
+  }
+
+  const editBtn = e.target.closest('button[data-edit]');
+  if (editBtn) {
+    e.preventDefault();
+    const action = editBtn.dataset.edit;
+    const tab = editBtn.closest('.agent-tab');
+    if (!tab) return;
+    const id = tab.dataset.agent;
+    if (action === 'delete') {
+      const info = agentInfo(id);
+      const label = info ? (info.display || info.name || id) : id;
+      const segCount = DATA.filter(s => agentOf(s) === id).length;
+      if (!confirm(`Delete agent "${label}"?\n\nThis removes:\n  • the agent entry in agents.json\n  • all ${segCount} session entries\n  • every image/${id}-* and video/${id}-* file\n\nThis cannot be undone.`)) return;
+      const r = await apiPost('/api/delete-agent', { agent_id: id });
+      if (r) {
+        if (id === SELECTED_AGENT) SELECTED_AGENT = null;
+        LAST_SIG = '';
+        load();
+      }
+    } else if (action === 'rename') {
+      const info = agentInfo(id);
+      const cur = info ? (info.display || '') : '';
+      const next = prompt(`New display for ${id}\n(non-Latin names → "字 · english", e.g. "廊 · corridor")`, cur);
+      if (next === null) return;
+      const r = await apiPost('/api/rename-display', { agent_id: id, display: next });
+      if (r) { LAST_SIG = ''; load(); }
+    } else if (action === 'up' || action === 'down') {
+      const ids = AGENTS.agents.map(a => a.id);
+      const idx = ids.indexOf(id);
+      if (idx < 0) return;
+      const target = action === 'up' ? idx - 1 : idx + 1;
+      if (target < 0 || target >= ids.length) return;
+      [ids[idx], ids[target]] = [ids[target], ids[idx]];
+      const r = await apiPost('/api/reorder-agents', { order: ids });
+      if (r) { LAST_SIG = ''; load(); }
+    }
+    return;
+  }
+
+  // ---- summary / thought edit pencils ----
+  const sumBtn = e.target.closest('button[data-edit-summary]');
+  if (sumBtn) {
+    e.preventDefault();
+    const [agentId, journeyId] = sumBtn.dataset.editSummary.split('|');
+    const info = agentInfo(agentId);
+    const j = info && (info.journeys || []).find(x => x.id === journeyId);
+    if (!j) return;
+    openEditModal({
+      title: `Edit summary — ${agentId} / ${journeyId}`,
+      en: j.summary || '',
+      zh: j.summary_zh || '',
+      ja: j.summary_ja || '',
+      onSave: async (en, zh, ja) => {
+        return await apiPost('/api/edit-summary', {
+          agent_id: agentId, journey_id: journeyId,
+          summary: en, summary_zh: zh, summary_ja: ja,
+        });
+      },
+    });
+    return;
+  }
+  const tBtn = e.target.closest('button[data-edit-thought]');
+  if (tBtn) {
+    e.preventDefault();
+    const segId = tBtn.dataset.editThought;
+    const seg = DATA.find(s => s.id === segId);
+    if (!seg) return;
+    openEditModal({
+      title: `Edit thought — ${segId}`,
+      en: seg.thought || '',
+      zh: seg.thought_zh || '',
+      ja: seg.thought_ja || '',
+      onSave: async (en, zh, ja) => {
+        return await apiPost('/api/edit-thought', {
+          seg_id: segId, thought: en, thought_zh: zh, thought_ja: ja,
+        });
+      },
+    });
+    return;
+  }
+
+  // ---- export journey ----
+  const expBtn = e.target.closest('button[data-export]');
+  if (expBtn) {
+    e.preventDefault();
+    const [agentId, journeyId] = expBtn.dataset.export.split('|');
+    openExportModal(agentId, journeyId);
+    return;
+  }
+});
+
+// ---- export modal ----
+let EXPORT_POLL_TIMER = null;
+let EXPORT_JOB_ID = null;
+function openExportModal(agentId, journeyId) {
+  EXPORT_JOB_ID = null;
+  if (EXPORT_POLL_TIMER) { clearInterval(EXPORT_POLL_TIMER); EXPORT_POLL_TIMER = null; }
+  document.getElementById('export-title').textContent =
+    `Export — ${agentId} / ${journeyId}`;
+  document.getElementById('export-form').style.display = '';
+  document.getElementById('export-start').disabled = false;
+  document.getElementById('export-start').textContent = 'Start export';
+  document.getElementById('export-log').textContent = '';
+  document.getElementById('export-overlay').dataset.agent = agentId;
+  document.getElementById('export-overlay').dataset.journey = journeyId;
+  document.getElementById('export-overlay').classList.add('open');
+}
+function closeExportModal() {
+  document.getElementById('export-overlay').classList.remove('open');
+  if (EXPORT_POLL_TIMER) { clearInterval(EXPORT_POLL_TIMER); EXPORT_POLL_TIMER = null; }
+}
+document.getElementById('export-close').addEventListener('click', closeExportModal);
+// Sync burn-row visibility with preset (social implies burned, so the row is
+// still useful — pick which language; YouTube preset can also burn if user
+// explicitly picks one).
+document.getElementById('export-preset').addEventListener('change', (e) => {
+  const burnSel = document.getElementById('export-burn');
+  if (e.target.value === 'social' && !burnSel.value) {
+    burnSel.value = 'en';  // sensible default for social
+  }
+});
+document.getElementById('export-start').addEventListener('click', async () => {
+  const overlay = document.getElementById('export-overlay');
+  const agentId = overlay.dataset.agent;
+  const journeyId = overlay.dataset.journey;
+  const preset = document.getElementById('export-preset').value;
+  const burn = document.getElementById('export-burn').value;
+  const intro = document.getElementById('export-intro').value === '1';
+  const startBtn = document.getElementById('export-start');
+  startBtn.disabled = true;
+  startBtn.textContent = 'Starting…';
+  const r = await apiPost('/api/export', {
+    agent_id: agentId, journey_id: journeyId,
+    preset, burn: burn || null, intro,
+  });
+  if (!r || !r.ok) {
+    document.getElementById('export-log').textContent =
+      `error: ${(r && r.error) || 'unknown'}`;
+    startBtn.disabled = false;
+    startBtn.textContent = 'Start export';
+    return;
+  }
+  EXPORT_JOB_ID = r.job_id;
+  document.getElementById('export-form').style.display = 'none';
+  document.getElementById('export-log').textContent = 'starting…';
+  startBtn.textContent = 'Running…';
+  EXPORT_POLL_TIMER = setInterval(pollExport, 2000);
+  pollExport();
+});
+
+async function pollExport() {
+  if (!EXPORT_JOB_ID) return;
+  try {
+    const r = await fetch(
+      '/api/export/status?job_id=' + encodeURIComponent(EXPORT_JOB_ID),
+      { cache: 'no-store' }
+    );
+    const data = await r.json();
+    if (!data.ok) return;
+    const job = data.job;
+    document.getElementById('export-log').textContent = job.log || '(working…)';
+    if (job.state === 'done' || job.state === 'error') {
+      clearInterval(EXPORT_POLL_TIMER);
+      EXPORT_POLL_TIMER = null;
+      const startBtn = document.getElementById('export-start');
+      startBtn.disabled = false;
+      if (job.state === 'done') {
+        startBtn.textContent = 'Done — close';
+        startBtn.onclick = closeExportModal;
+        const fname = job.burn ? `final.burn-${job.burn}.mp4` : 'final.mp4';
+        document.getElementById('export-log').textContent +=
+          `\n\n✓ done. Output: ${job.out_dir}\\${fname}`;
+      } else {
+        startBtn.textContent = 'Failed — close';
+        startBtn.onclick = closeExportModal;
+        document.getElementById('export-log').textContent +=
+          `\n\n✗ failed: ${job.error || 'unknown error'}`;
+      }
+    }
+  } catch (e) {
+    document.getElementById('export-log').textContent +=
+      `\npoll error: ${e.message}`;
+  }
+}
+
+// ---- edit modal ----
+let MODAL_SAVE = null;
+function openEditModal({ title, en, zh, ja, onSave }) {
+  document.getElementById('edit-title').textContent = title;
+  document.getElementById('edit-en').value = en;
+  document.getElementById('edit-zh').value = zh;
+  document.getElementById('edit-ja').value = ja;
+  MODAL_SAVE = onSave;
+  document.getElementById('edit-overlay').classList.add('open');
+  document.getElementById('edit-en').focus();
+}
+function closeEditModal() {
+  document.getElementById('edit-overlay').classList.remove('open');
+  MODAL_SAVE = null;
+}
+document.getElementById('edit-cancel').addEventListener('click', closeEditModal);
+document.getElementById('edit-save').addEventListener('click', async () => {
+  if (!MODAL_SAVE) return;
+  const en = document.getElementById('edit-en').value;
+  const zh = document.getElementById('edit-zh').value;
+  const ja = document.getElementById('edit-ja').value;
+  const r = await MODAL_SAVE(en, zh, ja);
+  if (r) {
+    closeEditModal();
+    LAST_SIG = '';
+    load();
+  }
+});
+document.getElementById('edit-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'edit-overlay') closeEditModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('edit-overlay').classList.contains('open')) {
+    closeEditModal();
+  }
+});
+
+load();
+pollStatus();
+setInterval(load, 5000);
+setInterval(pollStatus, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# machine-specific config
+config.json
+
+# runtime state (regenerated each session)
+logs/status.json
+logs/_next.json
+logs/_patch.json
+logs/_rename.json
+logs/_inspect.json
+logs/_serve.log
+
+# large generated media — excluded so your agent's output stays on your machine.
+image/*
+video/*
+
+# Claude Code / editor local settings
+.claude/settings.local.json
+.claude/settings.json
+.claude/launch.json
+
+# Python
+__pycache__/
+*.pyc
+driver/__pycache__/
+
+# workflow backup
+workflows/*.bak
+
+# Author's private backup folder (not for public repo)
+from_other_machine/
+
+# exported videos — gitignored so personal output stays local
+exports/
+
+# OS
+.DS_Store
+Thumbs.db

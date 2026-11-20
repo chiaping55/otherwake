@@ -1,0 +1,26 @@
+{
+  "_README": "Copy this file to .claude/settings.json and replace <COMFY> with your ComfyUI_windows_portable path. These rules let Claude Code run the project's stable-shape scripts (_gen.py, patch_thought.py, _rename.py, _translate_thoughts.py, _verify_translations.py, _dump_agent.py) without prompting. The deny rules block shell-based inspection of agents.json / session.json — Claude Code keeps reflexively reaching for `wc`, `python -c`, `powershell -Command (Get-Content ...)` etc. at wake time despite CLAUDE.md's explicit do-NOT list. The right tool for both files is the Read tool (they're plain JSON); these denies force that path. Paths must match exactly or prompts will reappear.",
+  "permissions": {
+    "allow": [
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/_gen.py logs/_next.json)",
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/patch_thought.py)",
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/_rename.py)",
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/_translate_thoughts.py)",
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/_verify_translations.py)",
+      "Bash(\"<COMFY>/python_embeded/python.exe\" driver/_dump_agent.py)",
+      "Bash(python driver/_translate_thoughts.py)",
+      "Bash(rm \"<PROJECT_ROOT>/image/\"*.png)",
+      "Bash(rm \"<PROJECT_ROOT>/video/\"*.mp4)"
+    ],
+    "deny": [
+      "Bash(*python -c*)",
+      "Bash(*python3 -c*)",
+      "Bash(*powershell -Command*)",
+      "Bash(*powershell -c *)",
+      "Bash(*pwsh -Command*)",
+      "Bash(*pwsh -c *)",
+      "Bash(*Get-Content *agents.json*)",
+      "Bash(*Get-Content *session.json*)"
+    ]
+  }
+}
