@@ -218,6 +218,8 @@ Driver 跑在 `serve.py` 內的守護執行緒——關掉瀏覽器分頁旅程�
 
 下面的比較來自 2026 年 5 月的實測，用的是當時有的模型。留著是為了記錄不同模型在這個迴圈裡的表現，不是現在的排名。
 
+之後有一項改動：prompt 原本寫著旅程「通常」跑多長，結果旅程長度就乖乖落在那個範圍裡。這些數字現在都拿掉了，一併拿掉的還有模型原本看得到的段數計數器、針對 Gemma 的疲勞提示，以及 50 段的強制上限。現在旅程在 agent 自己決定結束時才結束，agent 也會自己記筆記，記得還想去看什麼。下面表格裡的「幾段會自己休息」是改動之前的數據，還沒有重新量過。如果仍想要硬性上限，在 `config.json` 設 `driver.segment_cap`。
+
 > **推薦本地組合（離線最佳品質）**：trip 用 **`qwen3-vl:30b`** 跑，rest 後用 **`gemma3:27b`** 翻譯（透過 `--translate-journey`）。Qwen3 寫出至今本地模型最 self-aware、有 narrative arc 的 summary（會 cite slug-repeat 事實，例如「the same shop kept pulling me back」）。但 30B 在 Ollama `keep_alive=0` swap 模式下，自己翻自己常 timeout——gemma3:27b 17GB cold-load 比較快，繁體中文 + 日文 plain form 寫得乾淨。流程：
 >
 > Wake 時**不要勾**翻譯框，rest 後跑：

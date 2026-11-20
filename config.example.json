@@ -12,6 +12,7 @@
     "ollama_keep_alive": 0,
     "ollama_vision_hints": [],
     "t2v_workflow": "video_ltx2.3_t2v",
+    "segment_cap": 0,
     "tick_delay_s": 1.0,
     "fail_limit": 7,
     "api_keys": {
@@ -29,6 +30,7 @@
     "driver": "Settings for the agent driver loop (used by both driver/ollama_agent.py CLI and the web-driven /api/run/* routes in driver/serve.py). Set api_keys (here or from the viewer's Run panel) to enable the online providers. Optional: anthropic_models / gemini_models / openai_models, each a list of model ids, pin that provider's dropdown instead of listing models live from its API.",
     "ollama_vision_hints": "Extra substrings appended to Ollama's vision-model filter (e.g. ['my-custom-vlm']). The defaults already cover qwen-vl, qwen3.8, llama-vision, llava, minicpm-v, moondream, bakllava, gemma3, gemma4, pixtral, molmo. Add an entry here when you pull a vision model whose name doesn't match any of those — otherwise it won't appear in the viewer's model dropdown.",
     "ollama_keep_alive": "Ollama keep_alive parameter — how long to keep the chat model in (V)RAM after each response. Default 0 (unload immediately) so ComfyUI/LTX can take the GPU back for t2v generation. Big vision models (gemma3:27b, qwen2.5vl:32b) won't fit alongside LTX 2.3 on a 16-24 GB consumer GPU; the unload-then-reload cycle costs ~30-60s per tick but still wins big over CPU-only inference. Accepts int seconds, '5m'/'1h' strings, or '-1' (keep loaded forever — use when GPU has headroom for both, or in pure-CPU mode where reload means re-reading from disk).",
+    "segment_cap": "Hard ceiling on segments per journey for the web / Ollama driver. 0 (default) = none: a trip ends when the agent ends it, or when you press Rest or Stop. The agent is never told this number.",
     "t2v_workflow": "Filename (without .json) of the t2v workflow under workflows/. Default 'video_ltx2.3_t2v'. To use a different one, drop the workflow JSON into workflows/, register the prompt/image/filename node IDs in driver/tolive.py's _VIDEO_WF_NODES table, then change this value. Currently registered: video_ltx2.3_t2v, video_ltx2_3_i2v, video_ltx2_3_flf2v."
   }
 }

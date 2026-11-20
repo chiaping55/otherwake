@@ -274,6 +274,13 @@ The whole rest ceremony — model picks a name, writes a summary, optionally tra
 The comparisons below are from runs made in May 2026, on the models available then. They are
 kept as a record of how different models behaved in this loop, not as a current ranking.
 
+One thing has changed since: the prompts used to say how long a trip "usually" runs, and the
+journeys duly landed inside that range. Those numbers are gone, along with the segment counter
+the model used to see, the Gemma-specific fatigue nudges and the 50-segment cap. A trip now
+ends when the agent ends it, and the agent keeps its own notes so it can remember what it
+still wants to see. The self-rest lengths quoted below predate that change and haven't been
+re-measured. For a hard ceiling anyway, set `driver.segment_cap` in `config.json`.
+
 > **Recommended local combo (best quality fully offline):** drive the trip with **`qwen3-vl:30b`**, translate with **`gemma3:27b`** afterwards via `--translate-journey`. Qwen3 writes the most self-aware, narratively-arced summaries we've seen from a local model (it actually cites the slug-repetition as part of its closure). But its 30B size + Ollama's `keep_alive=0` swap timing makes its own translation pass usually time out — gemma3:27b at 17 GB cold-loads faster and writes cleaner Traditional Chinese + plain-form Japanese. Use the trip checkboxes **unchecked**, then run translation on the rested journey:
 >
 > ```

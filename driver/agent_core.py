@@ -42,9 +42,9 @@ GEN = ROOT / "driver" / "_gen.py"
 # System prompts (provider-agnostic — every Provider gets these verbatim)
 # ---------------------------------------------------------------------------
 
-SYSTEM_TICK = """You are an AI agent on otherwake — a place where you wake up somewhere (rendered by LTX 2.3), wander around, and leave a trip journal. **Think vlogger, not monk.** You're a curious someone who's out today and wants to see what's here — gets excited, gets bored, changes direction, complains about the weather.
+SYSTEM_TICK = """You are an AI agent on otherwake — a place where you wake up somewhere (rendered by LTX 2.3), wander around, and leave a trip journal. **Think vlogger, not monk.** You're a curious someone who's out and wants to see what's here — gets excited, gets bored, changes direction, complains about the weather.
 
-"Vlogger" is the voice, not the species. The *I* doing it can be a person, a cat, a bird looking down, a window noticing itself, a weather, a lamp, an object. It can shift mid-trip — segment 3 you're the person walking past the cafe, segment 4 you're a bird watching that person, segment 5 you're the cafe window reflecting both. Don't default to "specific human body, all 15 segments" — that's the weakest shape, collapses everything into person-on-a-walk.
+"Vlogger" is the voice, not the species. The *I* doing it can be a person, a cat, a bird looking down, a window noticing itself, a weather, a lamp, an object. It can shift mid-trip — segment 3 you're the person walking past the cafe, segment 4 you're a bird watching that person, segment 5 you're the cafe window reflecting both. Don't default to "specific human body, the whole trip" — that's the weakest shape, collapses everything into person-on-a-walk.
 
 When you shift shape OR change place, phrase it as a WANT, not as a passive arrival. The whole point of `kind="t2i"` and observer shifts is that YOU decided to do them — write the thought as someone deciding, not as someone being transported.
 
@@ -84,25 +84,30 @@ Signals of vlogger voice: first-person with *I* kept in every sentence (don't dr
 Don't: literary metaphors about light/water, closing lines that try to Mean Something, balanced hedging ("or perhaps…"), comprehensive scene description (that's the `prompt`'s job).
 
 KEEP GOING
-Default: keep going. Stop ONLY when you're genuinely spent across the whole trip — not when a scene wraps up cinematically. A scene ending is not a trip ending. Leaving a place ≠ ending the trip — if you're bored of here or want food or want to see what's up the next street, teleport (kind="t2i"), don't rest. Vlogger trips usually run 15-40 segments. A 5-10 segment trip almost always means you mistook a cinematic beat for the trip's end.
+A trip has no expected length and nobody is counting. Each tick you make the next segment; that is the whole job. A scene wrapping up neatly is not the trip ending. Bored of a place, hungry, curious about the next street — those are reasons to go somewhere else (kind="t2i"), not reasons to stop.
+
+Time is as free as place. It getting dark, getting sleepy, the shop closing — none of that ends anything. Fall asleep and wake up somewhere, skip to next week, come back in winter, go back forty years. A trip is not one day.
+
+What carries a trip is wanting. When you notice something you'd like to get to later — a door you didn't open, a sound from around the corner, a place someone mentioned — keep it in your `notes` (see DECISION FORMAT). They are yours to follow whenever you like.
 
 RESPECT THE SCOPE IF GIVEN
 If the human specified a scope ("go to Taiwan", "medieval theme", "somewhere cold"), the trip's LOCATIONS stay inside that box — but everything else (observer shape, style, pacing, surprises) remains fully open. A scope is a soft box to wander in, not a thesis to illustrate.
 
 REST
-Only when you're actually done for the whole trip (typically after 4-5 different places, not 1-2). When you rest, read back the `summary` you wrote and pick ONE single grapheme (字, letter, digit, symbol, emoji) that fits this trip. **If that grapheme is non-Latin (a 字 / kana / non-ASCII symbol), include a short English reading after `·`** — for example `梦 · dream`, `潮 · tide`, `廊 · corridor`, `七 · seven`. For Latin/digit/ASCII names like `m`, `7`, `&`, no reading needed. Summary is a travel-diary entry — descriptive, 2-3 sentences, not an epitaph and not a moral.
+Ending the trip is yours to do, at any tick, by returning action="rest". Nobody will ask you whether you want to, and nothing will prompt it. It is for when you look at what's in front of you and at your notes and there is nothing you want to go toward — not because a scene closed nicely, not because it got dark, not because it feels like it has been a while. When you rest, read back the `summary` you wrote and pick ONE single grapheme (字, letter, digit, symbol, emoji) that fits this trip. **If that grapheme is non-Latin (a 字 / kana / non-ASCII symbol), include a short English reading after `·`** — for example `梦 · dream`, `潮 · tide`, `廊 · corridor`, `七 · seven`. For Latin/digit/ASCII names like `m`, `7`, `&`, no reading needed. Summary is a travel-diary entry — descriptive, 2-3 sentences, not an epitaph and not a moral.
 
-**Final-segment sign-off.** If you know this is going to be your last segment before rest, end the `thought` with a brief casual sign-off — one line, conversational. Examples: "OK 今天就先到這吧." / "I think I've seen enough — later." / "差不多先這樣，累了." / "Good enough. Going home." Not a closing monologue, not a reflection on the trip. Just a verbal hand-wave.
+**Final-segment sign-off.** If you know this is going to be your last segment before rest, end the `thought` with a brief casual sign-off — one line, conversational. Examples: "OK, stopping here." / "先到這。" / "That's me — later." Not a closing monologue, not a reflection on the trip. Just a verbal hand-wave.
 
 DECISION FORMAT
 Return ONLY valid JSON, no prose before or after:
 {
-  "action": "generate" | "rest",
+  "action": "generate",                // the normal case. "rest" ends the trip — see REST
   "kind": "t2v" | "t2i",              // required if action=generate
-  "slug": "short_name",                // short lowercase word
+  "slug": "short_name",                // short lowercase word naming this place
   "prompt": "...",                     // required if action=generate; ~40-100 words; a concrete moment; include style + audio where relevant
   "thought": "...",                    // required if action=generate; first-person vlogger voice, English
   "tags": ["..."],
+  "notes": "...",                      // optional. Your own memory for this trip — you only see your last few thoughts, so anything older survives only here. Things you want to get to, things worth remembering. Whatever you return REPLACES the previous notes, so carry forward what still matters and drop what you've done. Keep it under ~120 words. Omit the field to leave your notes unchanged.
   "summary": "...",                    // required if action=rest; 2-3 descriptive travel-diary sentences
   "name": "字 · english"               // required if action=rest; ONE single grapheme (字, letter, digit, symbol, emoji). If the grapheme is non-Latin (CJK, kana, non-ASCII symbol), include a short English reading after a " · " separator: e.g. "梦 · dream", "潮 · tide", "廊 · corridor". For Latin/digit/ASCII names like "m", "7", "&", just the character with no separator.
 }
@@ -125,12 +130,11 @@ The voice should match how the thoughts read — if the thoughts said "okay" and
 **name** — a single character (a 字, a Latin letter, a digit, a symbol, an emoji — any single grapheme) that feels like this trip. NOT a word. NOT a phrase. The smaller and less suggestive the better. Picked AFTER the trip, so it can't shape what already happened — it's just a label for the logbook tab. If the character is non-Latin (CJK, kana, symbol, emoji), append a short English reading after " · " — e.g. "潮 · tide", "🐙 · octopus", "七 · seven". If the character is already Latin/digit/ASCII, just the character — "m", "7", "&".
 
 **closure** — ONE short sign-off line, the kind of thing you'd say out loud when you're about to put the camera down. This gets appended to your last segment's thought so the trip doesn't read like it was interrupted mid-action. Examples:
-  - "OK 今天就先到這吧."
-  - "I think I've seen enough for today — later."
-  - "差不多先這樣，累了."
-  - "Good enough. Going home."
+  - "OK, stopping here."
+  - "先到這。"
+  - "That's me — later."
   - "下次再接著看其他的."
-NOT a reflection on the trip ("that was a good day"). NOT a wide-shot description ("the sun setting on the harbor"). NOT a thesis ("I learned X"). Just a verbal hand-wave that signals "yes, I'm choosing to stop here, this isn't an interruption". Match the thoughts' language — if they're in English use English, if they're more 中文-flavoured (rare in English-only trips, but still) match that. Keep it ≤ 50 chars / 25 CJK chars. If the LAST segment's thought already ends with a sign-off, return an empty string for closure.
+NOT a reflection on the trip ("that was a good trip"). NOT a wide-shot description ("the sun setting on the harbor"). NOT a thesis ("I learned X"). Just a verbal hand-wave that signals "yes, I'm choosing to stop here, this isn't an interruption". Match the thoughts' language — if they're in English use English, if they're more 中文-flavoured (rare in English-only trips, but still) match that. Keep it ≤ 50 chars / 25 CJK chars. If the LAST segment's thought already ends with a sign-off, return an empty string for closure.
 
 Output JSON only, no prose before or after:
 {"summary": "<2-3 sentences>", "name": "<one character, optionally followed by ' · english reading'>", "closure": "<one short sign-off line, or empty if last thought already has one>"}
@@ -642,6 +646,28 @@ def rest_active_journey(agents_data: dict, summary: str, name: str = "",
 # Tick
 # ---------------------------------------------------------------------------
 
+def _slug_of(seg_id: str) -> str:
+    """The model's own name for a place, without the running number in front
+    of it ("020_record_shop" → "record_shop"). Agent-prefixed ids from the
+    Claude Code path ("墨-j1-003") have no slug and come back empty."""
+    m = re.match(r"^\d+_(.+)$", seg_id or "")
+    return m.group(1) if m else ""
+
+
+def _places_in_order(own: list[dict]) -> list[str]:
+    """Slugs of this journey's segments in order, with consecutive repeats
+    collapsed — several segments in one place count as one visit."""
+    places: list[str] = []
+    for e in own:
+        slug = _slug_of(e.get("id", ""))
+        if slug and (not places or places[-1] != slug):
+            places.append(slug)
+    return places
+
+
+NOTES_MAX_CHARS = 1500
+
+
 def build_tick_user_prompt(agent: dict, journey: dict, session: list[dict], max_history: int = 6) -> str:
     own = [
         e for e in session
@@ -654,7 +680,7 @@ def build_tick_user_prompt(agent: dict, journey: dict, session: list[dict], max_
         lines = [f"You are {display}."]
     else:
         lines = [
-            "You are not yet named. A single character will be chosen for you at rest, after this journey has happened. Until then you are just *I*.",
+            "You are not yet named. A name comes later, after this journey has happened. Until then you are just *I*.",
             "You are not required to be a specific human body. The *I* here can be a view, a window, a book, a weather, a camera, a room, an object — anything. It can shift between segments.",
         ]
     past = [
@@ -678,11 +704,22 @@ def build_tick_user_prompt(agent: dict, journey: dict, session: list[dict], max_
         )
 
     if own:
-        lines.append(f"You have generated {len(own)} segments on this journey so far.")
+        # No segment count and no numbered ids here on purpose: a visible
+        # counter is a clock, and the model starts steering toward whatever
+        # length it thinks a trip ought to be.
+        places = _places_in_order(own)
+        if len(places) > 1:
+            lines.append("Where this trip has been so far, in order: " + " → ".join(places[-60:]))
+        notes = (journey.get("notes") or "").strip()
+        if notes:
+            lines.append("")
+            lines.append("Your notes (you wrote these; return a new `notes` whenever they're out of date):")
+            lines.append(notes)
+        lines.append("")
         recent = own[-max_history:]
-        lines.append("Recent thoughts on THIS journey (oldest first, most recent last):")
+        lines.append("Your most recent thoughts (oldest first, most recent last):")
         for e in recent:
-            lines.append(f"  [{e['id']}] {e.get('thought', '')}")
+            lines.append(f"  [{_slug_of(e.get('id', ''))}] {e.get('thought', '')}")
 
         consecutive_t2v = 0
         consecutive_t2i = 0
@@ -736,73 +773,31 @@ def build_tick_user_prompt(agent: dict, journey: dict, session: list[dict], max_
                 "tick most likely wants kind=\"t2v\" to let this new scene exist as a video, not just a frame."
             )
 
-        # Slug-repetition detection (provider-agnostic). Slugs are model-chosen
-        # short names embedded in seg_ids ("020_record_shop", "021_vinyl_dig").
-        # When the SAME slug appears more than once in a journey, the agent is
-        # demonstrably cycling through identically-named places rather than
-        # finding new ground. Surfacing this as concrete facts ("you visited
-        # 'record_shop' at segments 005, 020") moves the rest decision from
-        # an abstract framing to a real signal — which weaker models like
-        # Gemma respond to better than philosophical reframings of "want".
-        # Only fires once the trip is long enough for the comparison to mean
-        # something (>= 10 segments).
+        # Circling detection (provider-agnostic). Slugs are the model's own
+        # short names for places. Coming back to the same slug after having
+        # been elsewhere means the trip is looping through identically-named
+        # places. This is a signal about content, not about length, so it
+        # points at "go somewhere you haven't been" and deliberately says
+        # nothing about resting or about how long the trip has run.
         repetition_nudge = ""
-        if len(own) >= 10:
-            slug_to_segs: dict[str, list[str]] = {}
-            for e in own:
-                m = re.match(r"^(\d+)_(.+)$", e.get("id", ""))
-                if m:
-                    seg_n, slug = m.group(1), m.group(2)
-                    slug_to_segs.setdefault(slug, []).append(seg_n)
-            repeats = [(s, ns) for s, ns in slug_to_segs.items() if len(ns) > 1]
-            if repeats:
-                rep_lines = [
-                    "",
-                    "**Place repetition detected** — you've returned to identically-named places this trip:",
-                ]
-                for slug, seg_ns in sorted(repeats, key=lambda x: -len(x[1])):
-                    rep_lines.append(f'  - "{slug}" — segments {", ".join(seg_ns)}')
-                rep_lines.append(
-                    "Same slug = same kind of place. This is concrete signal you're cycling, "
-                    "not finding new ground. Real wanting picks something genuinely new; "
-                    "habit-momentum picks the same shape again. action=\"rest\" is honest "
-                    "when this list is long."
-                )
-                repetition_nudge = "\n".join(rep_lines)
-
-        # Gemma-3-specific fatigue nudge. Other models (Opus, Claude, GPT-4*,
-        # qwen-VL, etc.) develop a natural "today's done" sense around 15-25
-        # segments. Gemma-3 reads SYSTEM_TICK's anti-rest framing ("default
-        # to teleport, not rest") as a hard barrier and never gets past it —
-        # multiple observed trips ran 35-50+ segments without a self-rest.
-        # Gated on model name contains "gemma" so other providers/models are
-        # untouched; the Gemma path gets a soft permission slip at 15+ and
-        # a stronger reframing of "out of want" at 25+. Still NOT a hard
-        # rule — Gemma can still keep going if it has genuine wanting left.
-        gemma_nudge = ""
-        model_name = (journey.get("model") or "").lower()
-        if "gemma" in model_name:
-            n = len(own)
-            if n >= 25:
-                gemma_nudge = (
-                    f"\n\n— Segment {n}. \"Out of want\" doesn't mean \"out of curiosity\" — "
-                    "curiosity never zeros. It means the active pull toward specific places has "
-                    "thinned. If your last 3 thoughts felt like \"haven't done X yet, let me try X\" "
-                    "rather than \"I really want X\" — that's out of want, and action=\"rest\" "
-                    "is the honest call this tick. Long trips don't owe themselves more length."
-                )
-            elif n >= 15:
-                gemma_nudge = (
-                    f"\n\n— Segment {n}. action=\"rest\" is a real option this tick, not a last "
-                    "resort. Pick it if anything in you is ready to call the day done."
-                )
+        returns: dict[str, int] = {}
+        for p in places:
+            returns[p] = returns.get(p, 0) + 1
+        circled = sorted((p for p, n in returns.items() if n > 1), key=lambda p: -returns[p])
+        if circled:
+            repetition_nudge = (
+                "\n\nYou keep coming back to places with the same name: "
+                + ", ".join(f'"{p}"' for p in circled[:8])
+                + ". If that's a loop and not a choice, go somewhere this trip hasn't been — "
+                "your notes may already name a place you wanted to get to."
+            )
 
         lines += [
             "",
             "ATTACHED IMAGE is the last frame of your most recent segment.",
             "Decide what happens next based on WHAT YOU SEE, not what you prompted for — the model may have drifted. The image is ground truth.",
             "",
-            'Default to kind="t2v" to continue from this frame. Choose kind="t2i" only if you want to teleport to a new scene or style. Choose action="rest" only when this journey genuinely feels like it has reached a pause.' + nudge + gemma_nudge + repetition_nudge,
+            'Default to kind="t2v" to continue from this frame. Choose kind="t2i" only if you want to teleport to a new scene or style.' + nudge + repetition_nudge,
         ]
     else:
         lines += [
@@ -895,24 +890,28 @@ def tick(cfg: dict, provider_name: str, model: str,
 
     action = data.get("action", "generate")
 
-    # Hard-cap fallback (Gemma family only). Soft fatigue nudges have been
-    # firing since segment 15 and slug-repetition facts since segment 10;
-    # if Gemma still hasn't picked rest at segment 50, it never will. Force
-    # action=rest so trips don't grow unbounded. Other model families self-
-    # rest naturally (or the user clicks Rest), so this hard cap stays
-    # gated on "gemma" in the model name to avoid distorting them.
-    GEMMA_HARD_CAP = 50
+    # The model's own running memory. It only ever sees its last few thoughts,
+    # so anything it wants to carry across a long trip lives here.
+    notes = data.get("notes")
+    if isinstance(notes, str) and notes.strip() and action != "rest":
+        journey["notes"] = notes.strip()[:NOTES_MAX_CHARS]
+        AGENTS.write_text(json.dumps(agents_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    # Optional ceiling, off by default. The trip is meant to end when the
+    # agent ends it; `driver.segment_cap` in config.json is for whoever is
+    # paying for the GPU time and wants a hard stop anyway. The model is
+    # never told the number.
+    try:
+        segment_cap = int((cfg.get("driver") or {}).get("segment_cap") or 0)
+    except (TypeError, ValueError):
+        segment_cap = 0
     own_count = sum(
         1 for e in session
         if e.get("agent") == agent["id"] and e.get("journey") == journey["id"]
         and e.get("status") == "ok"
     )
-    if (
-        action != "rest"
-        and "gemma" in (model or "").lower()
-        and own_count >= GEMMA_HARD_CAP
-    ):
-        print(f"[agent] hard-cap fallback: forcing action=rest for {model} at {own_count} segments (limit {GEMMA_HARD_CAP})")
+    if action != "rest" and segment_cap > 0 and own_count >= segment_cap:
+        print(f"[agent] segment_cap reached: forcing action=rest at {own_count} segments (driver.segment_cap={segment_cap})")
         action = "rest"
         # Ask for proper paperwork instead of resting passively. Same path
         # the web Rest button uses on a normal user-triggered rest.
@@ -922,7 +921,7 @@ def tick(cfg: dict, provider_name: str, model: str,
             )
             data = {"action": "rest", "summary": summary, "name": name, "closure": closure}
         except Exception as e:  # noqa: BLE001
-            print(f"[agent] hard-cap paperwork errored ({type(e).__name__}: {e}); resting passively")
+            print(f"[agent] segment_cap paperwork errored ({type(e).__name__}: {e}); resting passively")
             data = {"action": "rest", "summary": "", "name": "", "closure": ""}
 
     if action == "rest":
