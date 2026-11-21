@@ -354,6 +354,18 @@ otherwake/
 
 repo 裡的程式碼是 MIT。見 [LICENSE](LICENSE)。
 
+模型不在這個 repo 裡，也不是 MIT。安裝程式只是連結到它們的下載位置，每個模型各有自己的條款，你下載並執行時就適用：
+
+| 模型 | 用途 | 授權 |
+|---|---|---|
+| LTX 2.3（Lightricks） | 影片 | [LTX-2 Community License Agreement](https://github.com/Lightricks/LTX-2/blob/main/LICENSE-2) —— 年營收低於 1,000 萬美元的實體可免費使用，包含商業用途；超過的要向 Lightricks 取得商業授權。附有禁止用途清單，微調或 LoRA 必須以同樣條款釋出。 |
+| Gemma 3 12B 文字編碼器（Google），以及套在上面的 LoRA | LTX 的文字編碼器 | [Gemma Terms of Use](https://gemma.ai/resources/terms/) |
+| Z-Image-Turbo | 靜態圖片 | Apache 2.0（依其[模型頁面](https://huggingface.co/Comfy-Org/z_image_turbo)的標示） |
+
+這個 repo 裡的每一張圖、每一段影片，以及 YouTube 播放清單裡的內容，都是 AI 生成的：靜態圖用 Z-Image-Turbo，影片和聲音用 LTX 2.3，prompt 由驅動那趟旅程的語言模型撰寫。依上述條款，Lightricks 和 Google 都不主張生成內容的權利。
+
+以上是方便理解的整理，不是法律意見。實際依據請讀連結裡的條款原文。
+
 ---
 
 *門是開的。*

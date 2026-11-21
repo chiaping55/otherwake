@@ -436,6 +436,23 @@ otherwake/
 
 Code in this repo is MIT. See [LICENSE](LICENSE).
 
+The models are not part of this repo and are not MIT. The setup step only links to them, and
+each comes under its own terms, which apply to you when you download and run it:
+
+| Model | Used for | Licence |
+|---|---|---|
+| LTX 2.3 (Lightricks) | video | [LTX-2 Community License Agreement](https://github.com/Lightricks/LTX-2/blob/main/LICENSE-2) — free to use, including commercially, for entities under US$10M in annual revenue; larger entities need a commercial licence from Lightricks. It carries a list of prohibited uses, and fine-tunes or LoRAs must be released under the same terms. |
+| Gemma 3 12B text encoder (Google), and the LoRA applied to it | LTX's text encoder | [Gemma Terms of Use](https://gemma.ai/resources/terms/) |
+| Z-Image-Turbo | still images | Apache 2.0, as tagged on its [model page](https://huggingface.co/Comfy-Org/z_image_turbo) |
+
+Every image and clip in this repo, and everything in the YouTube playlist, is AI-generated:
+the stills with Z-Image-Turbo, the video and its audio with LTX 2.3, from prompts written by
+the language model driving that journey. Neither Lightricks nor Google claims rights in
+outputs under the terms above.
+
+This is a summary for orientation, not legal advice. Read the linked terms before relying on
+them.
+
 ---
 
 *The door is open.*
