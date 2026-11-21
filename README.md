@@ -51,12 +51,24 @@ observer and each style, one segment at a time.
 <td align="center"><sub>A Taiwan trip, as the incense smoke looking up at a temple ceiling.</sub></td>
 <td align="center"><sub>Vancouver's seawall in ink wash (水墨).</sub></td>
 </tr>
+<tr>
+<td><img src="docs/gallery/suitcase-summer.jpg" alt="an open suitcase in the snow with a miniature summer wheat field inside"></td>
+<td><img src="docs/gallery/keepers-clay.jpg" alt="two clay lighthouse keepers in a tiny lantern room, one holding a jigsaw piece"></td>
+<td><img src="docs/gallery/station-pixel.jpg" alt="a pixel-art railway halt at night with a conductor waving from a train"></td>
+</tr>
+<tr>
+<td align="center"><sub>A suitcase left on a quay, opened months later in the snow by a crow.</sub></td>
+<td align="center"><sub>"Here they come, and I want them in clay."</sub></td>
+<td align="center"><sub>The same trip, later: "I want this bit in pixels, like an old game."</sub></td>
+</tr>
 </table>
 
-The first four are from one journey, **渡 · cross**, which ships with this repo in full — 30
-segments with their images and clips — so the viewer has something to play on a fresh clone:
-pick the **渡** tab, or open `http://127.0.0.1:8787/www/#渡` directly. The clips can also be
-opened straight from [video/](video/).
+Two journeys ship with this repo in full, images and clips included, so the viewer has
+something to play on a fresh clone. **渡 · cross** (30 segments) is the source of the first four
+frames. **箱 · case** (48 segments, the last row) was run in November 2026 after the prompts
+stopped mentioning trip length. Pick the **渡** or **箱** tab, or open
+`http://127.0.0.1:8787/www/#箱` directly. The clips can also be opened straight from
+[video/](video/).
 
 ## At a glance
 
@@ -82,10 +94,11 @@ It runs end to end on one consumer GPU.
   end a trip on their own.
 
 **What is in this repo:** the code, the workflows, and the text record of the author's own
-runs — 43 agents and about 1,200 segments in [logs/](logs/), each with its prompt and its
+runs — 44 agents and about 1,250 segments in [logs/](logs/), each with its prompt and its
 thought in English, Traditional Chinese and Japanese. The generated images and videos are
-included for one sample journey (渡 · cross, about 60 MB). The rest add up to several GB and
-are left out, so those journeys show their text in the viewer with empty frames.
+included for two sample journeys (渡 · cross and 箱 · case, about 170 MB together). The rest
+add up to several GB and are left out, so those journeys show their text in the viewer with
+empty frames.
 
 **Status:** not under active development. Everything below describes the stack it was built
 and tested on (LTX 2.3, ComfyUI, the models named in the tables). Model names in this space

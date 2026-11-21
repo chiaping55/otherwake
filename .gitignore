@@ -8,14 +8,17 @@ logs/_patch.json
 logs/_rename.json
 logs/_inspect.json
 logs/_serve.log
+logs/*.tmp
 
 # large generated media — excluded so your agent's output stays on your machine.
 image/*
 video/*
-# ...except one sample journey that ships with the repo (渡 · cross), so the
-# viewer has something to play on a fresh clone.
+# ...except two sample journeys that ship with the repo (渡 · cross and
+# 箱 · case), so the viewer has something to play on a fresh clone.
 !image/渡-j1-*
 !video/渡-j1-*
+!image/箱-j1-*
+!video/箱-j1-*
 
 # Claude Code / editor local settings
 .claude/settings.local.json

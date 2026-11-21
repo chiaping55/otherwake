@@ -24,6 +24,9 @@ try:
 except (AttributeError, OSError):
     pass
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import jsonio  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 SESSION = ROOT / "logs" / "session.json"
 PATCH_BUFFER = ROOT / "logs" / "_patch.json"
@@ -33,7 +36,7 @@ def patch(seg_id: str, new_thought: str) -> int:
     if not SESSION.exists():
         print(f"session.json not found at {SESSION}", file=sys.stderr)
         return 1
-    data = json.loads(SESSION.read_text(encoding="utf-8"))
+    data = jsonio.read_json(SESSION)
     hits = 0
     for entry in data:
         if entry.get("id") == seg_id:
@@ -42,7 +45,7 @@ def patch(seg_id: str, new_thought: str) -> int:
     if hits == 0:
         print(f"no entry with id {seg_id!r} in session.json", file=sys.stderr)
         return 2
-    SESSION.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    jsonio.write_json(SESSION, data)
     print(f"patched {hits} entry/entries for {seg_id}")
     return 0
 

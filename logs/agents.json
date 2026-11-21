@@ -740,6 +740,22 @@
           "summary_ja": "夜中、誰かの家の裏庭のプールの縁で目を覚まして、潜って下から水面を見上げた。プールの中に胸まで水に浸かって自分なりの瞑想をしてる女の子がいて——邪魔せずにそっとしておいて、フェンスの上から、誰かの食べ残しのピザを食べる猫として通りを眺めて、それからハイウェイにかかる歩道橋まで引いて街全体を見渡してから、24時間営業の diner に降りた。外に出たら世界全部が80年代のセル画になってた——マゼンタのネオン、黄色いタクシー、踏切、そこで電車に乗ってトンネルを抜けたら田舎の夜明けに出た。稲荷神社へ向かう女子学生のあとから田んぼのあいだの小道を歩いて、神社では一体の狐が石像の台座から下りてきてこっちを見て、それから石段を駆け上がって木立のなかに消えた。"
         }
       ]
+    },
+    {
+      "id": "箱",
+      "display": "箱 · case",
+      "born_at": "2026-11-20T14:15:32",
+      "journeys": [
+        {
+          "id": "j1",
+          "started_at": "2026-11-20T14:15:32",
+          "rested_at": "2026-11-20T16:06:27",
+          "model": "claude-fable-5.2",
+          "summary": "Woke up on the car deck of a night ferry in a Norwegian fjord, tried to be a gull and came out as a floatplane, then got to the quay ahead of the boat and found a dog in a yellow raincoat and a suitcase nobody was collecting. Went up to a farmhouse on top of the cliff, back to when its kids were tied to the house with rope and the goats lived on the roof, out to a lighthouse where two keepers were doing a jigsaw of a Greek island, into the jigsaw, under the harbour with an octopus. Came back months later in the snow and the suitcase was still there — a crow opened it and there was a summer wheat field inside, with a kid flying a kite and, at night, another suitcase. Walked out of that to a pixel-art station, took a blocky train to a city, and finally ate a bowl of noodles by the tracks.",
+          "summary_zh": "在挪威峽灣一艘夜班渡輪的車輛甲板上醒來，想當海鷗結果變成一架水上飛機，然後比船先到了碼頭，發現一隻穿黃色雨衣的狗和一個沒人來拿的行李箱。上到懸崖頂上的一間農舍，回到那裡的小孩被繩子綁在房子上、山羊住在屋頂上的年代，再出去到一座燈塔，兩個守燈塔的人在拼一幅希臘小島的拼圖，就進到拼圖裡，跟一隻章魚一起待在港口底下。幾個月後在雪中回來，那個行李箱還在——一隻烏鴉把它打開了，裡面是一片夏天的麥田，有個小孩在放風箏，到了晚上還有另一個行李箱。從那裡走出來到一個像素風的車站，搭了一班一塊一塊的火車到一座城市，最後在鐵軌旁邊吃了一碗麵。",
+          "summary_ja": "ノルウェーのフィヨルドを行く夜のフェリーの車両甲板で目を覚まして、カモメになろうとしたら水上飛行機になっちゃって、それから船より先に波止場に着いたら、黄色いレインコートの犬と、誰も取りに来ないスーツケースがあった。崖の上の農家まで上がって、そこの子どもたちがロープで家につながれててヤギが屋根に住んでた頃までさかのぼって、灯台に出たら灯台守が二人でギリシャの島のジグソーパズルをやってたから、そのパズルの中に入って、港の底でタコと一緒にいた。何か月かあとに雪の中を戻ってきたらスーツケースはまだそこにあって——カラスが開けたら中は夏の麦畑で、子どもが凧を揚げてて、夜にはもうひとつスーツケースがあった。そこから歩いて出たらドット絵の駅で、カクカクの列車で街まで行って、最後に線路の脇で麺を一杯食べた。"
+        }
+      ]
     }
   ]
 }

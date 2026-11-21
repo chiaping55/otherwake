@@ -39,9 +39,19 @@
 <td align="center"><sub>台灣那一趟，當線香的煙，從下往上看廟的天花板。</sub></td>
 <td align="center"><sub>用水墨畫的溫哥華海堤。</sub></td>
 </tr>
+<tr>
+<td><img src="docs/gallery/suitcase-summer.jpg" alt="雪地裡一個打開的行李箱，裡面是一片迷你的夏日麥田"></td>
+<td><img src="docs/gallery/keepers-clay.jpg" alt="狹小燈室裡兩位黏土做的燈塔守，其中一位拿著一片拼圖"></td>
+<td><img src="docs/gallery/station-pixel.jpg" alt="像素風的夜間小車站，列車長從車門揮手"></td>
+</tr>
+<tr>
+<td align="center"><sub>碼頭上沒人拿的行李箱，幾個月後在雪中被一隻烏鴉啄開。</sub></td>
+<td align="center"><sub>「他們上來了，我想把他們做成黏土的。」</sub></td>
+<td align="center"><sub>同一趟旅程的後段：「這一段我想要像素的，像老遊戲那樣。」</sub></td>
+</tr>
 </table>
 
-前四張出自同一趟旅程 **渡 · cross**。這趟旅程完整收在 repo 裡（30 段，含圖片和影片），所以剛 clone 下來檢視器就有東西可以播：點「渡」分頁，或直接開 `http://127.0.0.1:8787/www/#渡`。影片也可以直接從 [video/](video/) 打開。
+有兩趟旅程完整收在 repo 裡（含圖片和影片），所以剛 clone 下來檢視器就有東西可以播。**渡 · cross**（30 段）是前四張圖的出處。**箱 · case**（48 段，最後一排）是 2026 年 11 月把 prompt 裡的長度暗示拿掉之後跑的。點「渡」或「箱」分頁，或直接開 `http://127.0.0.1:8787/www/#箱`。影片也可以直接從 [video/](video/) 打開。
 
 ## 一覽
 
@@ -53,7 +63,7 @@
 - **單檔的網頁 viewer**（[www/index.html](www/index.html)）：agent 分頁、旅程分組、EN / 繁中 / 日本語 的 thought、連續播放、就地編輯，還能把一趟旅程匯出成燒好字幕的 mp4。
 - **主要的工程問題是 prompt 設計。**commit 紀錄大部分都在處理行為：不讓每位 agent 都收斂成同一種十段短片、不讓第一人稱的口吻滑回場景描述、讓小型本地模型學會自己結束旅程。
 
-**這個 repo 裡有什麼：**程式碼、workflow，以及作者自己跑出來的文字紀錄 —— [logs/](logs/) 裡有 43 位 agent、約 1,200 段，每段都有 prompt，以及英文、繁體中文、日文三種語言的 thought。產出的圖片和影片只收了一趟範例旅程（渡 · cross，約 60 MB）；其餘加起來好幾 GB，沒有放進來，所以那些旅程在 viewer 裡只有文字、畫面是空的。
+**這個 repo 裡有什麼：**程式碼、workflow，以及作者自己跑出來的文字紀錄 —— [logs/](logs/) 裡有 44 位 agent、約 1,250 段，每段都有 prompt，以及英文、繁體中文、日文三種語言的 thought。產出的圖片和影片只收了兩趟範例旅程（渡 · cross 和 箱 · case，合計約 170 MB）；其餘加起來好幾 GB，沒有放進來，所以那些旅程在 viewer 裡只有文字、畫面是空的。
 
 **狀態：**已不再積極開發。下面寫的都是當時開發和測試用的環境（LTX 2.3、ComfyUI、表格裡列的模型）。這個領域的模型名稱幾個月就換一輪，請看[模型時效](#模型時效)。
 

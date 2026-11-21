@@ -5,8 +5,11 @@ and finding the first agent whose journeys[] contains an entry with
 rested_at == null. An agent is "awake" iff it has such a journey; there is no
 top-level `current` field any more — aliveness is derived from journey state.
 """
-import json, datetime
+import json, datetime, sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import jsonio  # noqa: E402
 
 # resolve project root via config.json (same as tolive.py)
 _CFG_PATH = Path(__file__).resolve().parent.parent / "config.json"
@@ -33,12 +36,12 @@ def _active_agent_and_journey() -> tuple[str | None, str | None]:
 
 
 def _read() -> list:
+    # A missing log is a fresh start. A log that exists but can't be read is
+    # NOT treated as empty — append() would then write back a one-entry file
+    # and wipe every earlier journey.
     if not LOG.exists():
         return []
-    try:
-        return json.loads(LOG.read_text(encoding="utf-8"))
-    except Exception:
-        return []
+    return jsonio.read_json(LOG)
 
 
 def _rel(p) -> str | None:
@@ -68,4 +71,4 @@ def append(**entry) -> None:
     data = _read()
     data.append(entry)
     LOG.parent.mkdir(parents=True, exist_ok=True)
-    LOG.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    jsonio.write_json(LOG, data)
